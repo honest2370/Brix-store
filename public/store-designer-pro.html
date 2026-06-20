@@ -1,0 +1,2363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Store Designer Pro — Brixnode</title>
+<meta name="robots" content="noindex,nofollow">
+<style>
+:root {
+  --blue:#6C8EFF; --blue-dark:#4F72F5; --blue-light:#F0F4FF;
+  --green:#3CBCA0; --red:#F07087; --orange:#F5A94E;
+  --lavender:#C4B5FD; --lavender-soft:#EDE9FE;
+  --text:#1E1B40; --text-secondary:#7B7AA8; --text-muted:#B3B2D1;
+  --bg:#F7F8FF; --surface:#fff;
+  --border:rgba(200,195,240,0.55);
+  --shadow:0 4px 20px rgba(100,110,220,0.10);
+  --radius:16px;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  --toolbar-h:56px;
+  --sidebar-w:280px;
+  --panel-w:280px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--font);background:#E8EAF6;height:100vh;overflow:hidden;display:flex;flex-direction:column;}
+
+/* ── TOP TOOLBAR ── */
+#toolbar{
+  height:var(--toolbar-h);display:flex;align-items:center;gap:10px;
+  background:#1E1B40;color:white;padding:0 16px;
+  box-shadow:0 2px 12px rgba(0,0,0,0.25);
+  z-index:200;flex-shrink:0;overflow-x:auto;
+}
+.tb-brand{font-size:16px;font-weight:800;color:white;display:flex;align-items:center;gap:8px;margin-right:8px;white-space:nowrap;}
+.tb-brand svg{opacity:.85;}
+.tb-sep{width:1px;height:28px;background:rgba(255,255,255,0.15);margin:0 4px;flex-shrink:0;}
+.tb-btn{
+  display:flex;align-items:center;gap:6px;padding:7px 13px;
+  border:1.5px solid rgba(255,255,255,0.18);border-radius:10px;
+  background:rgba(255,255,255,0.08);color:white;
+  font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;
+  transition:all 0.12s;white-space:nowrap;flex-shrink:0;
+}
+.tb-btn:hover{background:rgba(255,255,255,0.16);}
+.tb-btn:active{transform:scale(0.96);}
+.tb-btn:disabled{opacity:.35;cursor:not-allowed;}
+.tb-btn:disabled:hover{background:rgba(255,255,255,0.08);}
+.tb-btn.primary{background:var(--blue);border-color:var(--blue);}
+.tb-btn.primary:hover{background:var(--blue-dark);}
+.tb-btn.danger{background:rgba(240,112,135,0.2);border-color:rgba(240,112,135,0.4);color:#F07087;}
+.tb-btn.icon-only{padding:7px 9px;}
+.tb-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0;}
+#tb-store-name{
+  flex:1;background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.18);
+  border-radius:10px;color:white;padding:7px 14px;font-family:var(--font);
+  font-size:14px;font-weight:700;outline:none;max-width:240px;min-width:120px;
+}
+#tb-store-name::placeholder{color:rgba(255,255,255,0.4);}
+#tb-store-name:focus{border-color:var(--blue);background:rgba(108,142,255,0.15);}
+#tb-slug{font-size:11px;color:rgba(255,255,255,0.45);white-space:nowrap;}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+#save-status{font-size:11px;color:rgba(255,255,255,0.45);transition:color .3s;white-space:nowrap;}
+#save-status.saving{color:#F5A94E;}
+#save-status.saved{color:#3CBCA0;}
+#save-status.error{color:#F07087;}
+
+/* ── MAIN LAYOUT ── */
+#main{display:flex;flex:1;overflow:hidden;}
+
+/* ── LEFT SIDEBAR (Elements panel) ── */
+#sidebar{
+  width:var(--sidebar-w);background:#16133A;
+  display:flex;flex-direction:column;flex-shrink:0;
+  border-right:1px solid rgba(255,255,255,0.07);overflow:hidden;
+}
+.sb-header{padding:14px 16px 10px;font-size:11px;font-weight:800;color:rgba(255,255,255,0.4);letter-spacing:1px;text-transform:uppercase;}
+.sb-tabs{display:flex;padding:0 12px 10px;gap:6px;flex-wrap:wrap;}
+.sb-tab{flex:1;min-width:60px;padding:7px 4px;text-align:center;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;color:rgba(255,255,255,0.45);border:1.5px solid transparent;transition:all .12s;}
+.sb-tab.active{background:rgba(108,142,255,0.2);border-color:rgba(108,142,255,0.35);color:#A8BFFF;}
+#sb-content{flex:1;overflow-y:auto;padding:0 10px 16px;}
+#sb-content::-webkit-scrollbar{width:4px;}
+#sb-content::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.12);border-radius:4px;}
+.sb-section{margin-bottom:14px;}
+.sb-section-title{font-size:10px;font-weight:800;color:rgba(255,255,255,0.3);letter-spacing:0.8px;text-transform:uppercase;padding:8px 6px 6px;}
+.el-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.el-btn{
+  background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);
+  border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;
+  color:rgba(255,255,255,0.75);font-size:11px;font-weight:600;
+  transition:all .12s;display:flex;flex-direction:column;align-items:center;gap:6px;
+}
+.el-btn:hover{background:rgba(108,142,255,0.18);border-color:rgba(108,142,255,0.4);color:#A8BFFF;}
+.el-btn:active{transform:scale(0.95);}
+.el-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;}
+.el-btn.wide{grid-column:span 2;flex-direction:row;padding:10px 14px;justify-content:flex-start;gap:10px;}
+/* Color swatches */
+.color-grid{display:flex;flex-wrap:wrap;gap:8px;padding:4px 6px;}
+.color-swatch{width:32px;height:32px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .12s;position:relative;}
+.color-swatch:hover{transform:scale(1.15);}
+.color-swatch.active::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid white;}
+/* Theme preset cards */
+.theme-grid{display:flex;flex-direction:column;gap:8px;}
+.theme-card{display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);cursor:pointer;transition:all .12s;}
+.theme-card:hover{border-color:rgba(108,142,255,0.4);background:rgba(108,142,255,0.1);}
+.theme-card.active{border-color:#6C8EFF;background:rgba(108,142,255,0.18);}
+.theme-card-swatch{display:flex;height:28px;width:48px;border-radius:8px;overflow:hidden;flex-shrink:0;}
+.theme-card-swatch span{flex:1;}
+.theme-card-name{font-size:12px;font-weight:700;color:rgba(255,255,255,0.85);}
+/* Font list */
+.font-item{padding:9px 10px;border-radius:10px;cursor:pointer;color:rgba(255,255,255,0.7);font-size:13px;transition:all .12s;border:1.5px solid transparent;}
+.font-item:hover{background:rgba(108,142,255,0.15);border-color:rgba(108,142,255,0.3);color:white;}
+.font-item.active{background:rgba(108,142,255,0.25);border-color:rgba(108,142,255,0.4);color:#A8BFFF;}
+/* Layers list */
+.layer-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;cursor:pointer;color:rgba(255,255,255,0.65);font-size:12px;font-weight:600;border:1.5px solid transparent;transition:all .12s;margin-bottom:5px;}
+.layer-item:hover{background:rgba(255,255,255,0.06);}
+.layer-item.active{background:rgba(108,142,255,0.2);border-color:rgba(108,142,255,0.35);color:#A8BFFF;}
+.layer-item .layer-icon{font-size:14px;flex-shrink:0;}
+.layer-item .layer-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.layer-item .layer-vis{opacity:.5;flex-shrink:0;}
+.layer-item.hidden-block .layer-name{opacity:.4;text-decoration:line-through;}
+.layer-drag-handle{cursor:grab;opacity:.4;}
+.layer-drag-handle:hover{opacity:1;}
+
+/* ── CANVAS AREA ── */
+#canvas-wrap{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:flex-start;overflow:auto;padding:20px;gap:16px;
+  background:#E8EAF6;position:relative;
+}
+#canvas-wrap::-webkit-scrollbar{width:6px;height:6px;}
+#canvas-wrap::-webkit-scrollbar-thumb{background:rgba(108,142,255,0.3);border-radius:4px;}
+#zoom-bar{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.85);
+  border-radius:50px;padding:6px 14px;font-size:12px;font-weight:600;color:var(--text-secondary);
+  box-shadow:var(--shadow);border:1px solid var(--border);flex-wrap:wrap;justify-content:center;}
+.zoom-btn{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--border);background:white;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--text);transition:all .1s;}
+.zoom-btn:hover{background:var(--blue);color:white;border-color:var(--blue);}
+#zoom-val{min-width:38px;text-align:center;}
+.device-toggle{display:flex;gap:4px;}
+.device-btn{padding:5px 10px;border-radius:8px;border:1.5px solid var(--border);background:white;cursor:pointer;font-size:11px;font-weight:700;color:var(--text-secondary);transition:all .1s;}
+.device-btn.active{background:var(--blue);color:white;border-color:var(--blue);}
+
+/* ── STORE CANVAS ── */
+#store-canvas{
+  width:390px;background:white;border-radius:20px;
+  box-shadow:0 24px 80px rgba(0,0,0,0.22),0 4px 16px rgba(0,0,0,0.1);
+  overflow:hidden;position:relative;
+  transform-origin:top center;transition:transform .15s,width .2s;
+  min-height:700px;
+}
+#store-canvas.device-desktop{width:900px;}
+/* Canvas sections */
+.cs-section{position:relative;cursor:pointer;transition:outline .1s;}
+.cs-section:hover{outline:2px dashed rgba(108,142,255,0.5);}
+.cs-section.selected{outline:2px solid #6C8EFF;}
+.cs-section.hidden-block{display:none;}
+.cs-section .section-actions{
+  display:none;position:absolute;top:6px;right:6px;z-index:50;gap:5px;
+}
+.cs-section.selected .section-actions,
+.cs-section:hover .section-actions{display:flex;}
+.sec-act-btn{
+  width:28px;height:28px;border-radius:8px;background:rgba(30,27,64,0.7);
+  border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:white;transition:all .1s;backdrop-filter:blur(4px);
+}
+.sec-act-btn:hover{background:#6C8EFF;}
+.sec-act-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;}
+.sec-label{position:absolute;top:6px;left:6px;z-index:50;background:rgba(30,27,64,0.7);color:white;
+  font-size:10px;font-weight:800;padding:4px 8px;border-radius:6px;backdrop-filter:blur(4px);
+  display:none;letter-spacing:.5px;text-transform:uppercase;}
+.cs-section.selected .sec-label,.cs-section:hover .sec-label{display:block;}
+
+/* ── RIGHT PANEL (Properties) ── */
+#prop-panel{
+  width:var(--panel-w);background:white;border-left:1px solid var(--border);
+  display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;
+}
+#prop-panel-header{
+  padding:14px 16px;border-bottom:1px solid var(--border);
+  font-size:13px;font-weight:800;color:var(--text);
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+}
+#prop-panel-header .ph-tabs{display:flex;gap:4px;}
+.ph-tab{font-size:11px;font-weight:700;padding:5px 10px;border-radius:8px;cursor:pointer;color:var(--text-secondary);border:1.5px solid transparent;}
+.ph-tab.active{background:var(--blue-light);color:var(--blue);border-color:rgba(108,142,255,.3);}
+#prop-panel-body{flex:1;overflow-y:auto;padding:14px;}
+#prop-panel-body::-webkit-scrollbar{width:4px;}
+#prop-panel-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+.prop-group{margin-bottom:18px;}
+.prop-label{font-size:11px;font-weight:800;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.7px;margin-bottom:7px;display:flex;align-items:center;justify-content:space-between;}
+.prop-input{
+  width:100%;padding:9px 13px;border:1.5px solid var(--border);border-radius:10px;
+  font-family:var(--font);font-size:13px;color:var(--text);background:white;outline:none;
+  transition:border-color .1s;
+}
+.prop-input:focus{border-color:var(--blue);}
+.prop-textarea{min-height:70px;resize:vertical;border-radius:12px;}
+.prop-code{font-family:'SF Mono',Consolas,Menlo,monospace;font-size:12px;min-height:90px;background:#1E1B40;color:#A8BFFF;border-color:#2D2A5E;}
+.prop-color-row{display:flex;flex-wrap:wrap;gap:7px;}
+.prop-swatch{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .12s;}
+.prop-swatch:hover{transform:scale(1.15);}
+.prop-swatch.active{border-color:var(--text);}
+.prop-color-input{width:48px;height:28px;border-radius:8px;border:1.5px solid var(--border);padding:0 3px;cursor:pointer;}
+.prop-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.prop-row.cols-3{grid-template-columns:1fr 1fr 1fr;}
+.prop-row.cols-4{grid-template-columns:1fr 1fr 1fr 1fr;}
+.prop-btn{
+  width:100%;padding:10px;border:1.5px solid var(--border);border-radius:10px;
+  background:white;font-family:var(--font);font-size:13px;font-weight:600;
+  color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;
+  transition:all .1s;
+}
+.prop-btn:hover{background:var(--blue-light);border-color:var(--blue);color:var(--blue);}
+.prop-btn.primary{background:var(--blue);color:white;border-color:var(--blue);}
+.prop-btn.danger{background:rgba(240,112,135,0.08);color:var(--red);border-color:rgba(240,112,135,0.3);}
+.prop-btn.danger:hover{background:rgba(240,112,135,0.18);}
+.prop-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;}
+.prop-slider{width:100%;accent-color:var(--blue);}
+.prop-slider-row{display:flex;align-items:center;gap:10px;}
+.prop-slider-row .prop-slider{flex:1;}
+.prop-slider-val{font-size:12px;font-weight:700;color:var(--text-secondary);min-width:42px;text-align:right;}
+.prop-select{
+  width:100%;padding:9px 13px;border:1.5px solid var(--border);border-radius:10px;
+  font-family:var(--font);font-size:13px;color:var(--text);background:white;outline:none;cursor:pointer;
+}
+.prop-select:focus{border-color:var(--blue);}
+.prop-toggle-row{display:flex;align-items:center;justify-content:space-between;padding:4px 0;}
+.prop-toggle{position:relative;width:40px;height:22px;flex-shrink:0;}
+.prop-toggle input{opacity:0;width:0;height:0;}
+.prop-toggle-slider{
+  position:absolute;inset:0;background:#D1D5DB;border-radius:50px;cursor:pointer;transition:.2s;
+}
+.prop-toggle-slider:before{
+  content:'';position:absolute;width:16px;height:16px;border-radius:50%;
+  background:white;left:3px;top:3px;transition:.2s;
+}
+.prop-toggle input:checked + .prop-toggle-slider{background:var(--blue);}
+.prop-toggle input:checked + .prop-toggle-slider:before{transform:translateX(18px);}
+.prop-sep{height:1px;background:var(--border);margin:6px 0 14px;}
+.prop-hint{font-size:11px;color:var(--text-muted);line-height:1.5;margin-top:4px;}
+.prop-collapse{border:1.5px solid var(--border);border-radius:12px;margin-bottom:14px;overflow:hidden;}
+.prop-collapse-head{padding:10px 13px;font-size:12px;font-weight:800;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:space-between;background:var(--blue-light);}
+.prop-collapse-head .chev{transition:transform .15s;}
+.prop-collapse.open .chev{transform:rotate(90deg);}
+.prop-collapse-body{padding:13px;display:none;}
+.prop-collapse.open .prop-collapse-body{display:block;}
+.upload-zone{
+  border:2px dashed var(--border);border-radius:12px;padding:18px;
+  text-align:center;cursor:pointer;transition:all .12s;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  color:var(--text-secondary);font-size:12px;font-weight:600;
+}
+.upload-zone:hover{border-color:var(--blue);background:var(--blue-light);color:var(--blue);}
+.upload-zone svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;opacity:.7;}
+.upload-zone img{width:100%;max-height:80px;object-fit:cover;border-radius:8px;}
+.tag-list{display:flex;flex-wrap:wrap;gap:6px;}
+.tag-chip{display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:50px;background:var(--blue-light);color:var(--blue);font-size:11px;font-weight:700;}
+.tag-chip button{background:none;border:none;cursor:pointer;color:var(--blue);font-size:12px;line-height:1;}
+
+/* ── CANVAS SECTION STYLES ── */
+/* Hero */
+.cs-hero{
+  padding:40px 24px 36px;display:flex;flex-direction:column;align-items:center;
+  text-align:center;position:relative;overflow:hidden;min-height:220px;
+  background:linear-gradient(135deg,#6C8EFF,#C4B5FD);
+}
+.cs-hero-bg{position:absolute;inset:0;object-fit:cover;width:100%;height:100%;}
+.cs-hero-overlay{position:absolute;inset:0;}
+.cs-hero-logo{
+  width:72px;height:72px;border-radius:20px;
+  background:rgba(255,255,255,0.25);backdrop-filter:blur(8px);
+  border:3px solid rgba(255,255,255,0.5);
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;font-weight:900;color:white;
+  margin-bottom:14px;position:relative;z-index:2;overflow:hidden;flex-shrink:0;
+}
+.cs-hero-logo img{width:100%;height:100%;object-fit:cover;}
+.cs-hero-name{font-size:24px;font-weight:900;color:white;position:relative;z-index:2;text-shadow:0 2px 8px rgba(0,0,0,0.2);}
+.cs-hero-tagline{font-size:13px;color:rgba(255,255,255,0.8);margin-top:6px;position:relative;z-index:2;line-height:1.5;}
+.cs-hero-badges{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap;position:relative;z-index:2;}
+.cs-hero-badge{padding:5px 13px;border-radius:50px;background:rgba(255,255,255,0.2);backdrop-filter:blur(6px);font-size:11px;font-weight:700;color:white;border:1px solid rgba(255,255,255,0.3);}
+.cs-hero-cta{margin-top:16px;position:relative;z-index:2;display:inline-block;padding:12px 28px;border-radius:50px;font-size:13px;font-weight:800;text-decoration:none;background:white;}
+
+/* Nav bar */
+.cs-nav{
+  padding:12px 20px;display:flex;align-items:center;gap:12px;
+  border-bottom:1px solid var(--border);background:white;
+  position:sticky;top:0;z-index:10;
+}
+.cs-nav-logo{width:32px;height:32px;border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;flex-shrink:0;}
+.cs-nav-logo img{width:100%;height:100%;object-fit:cover;}
+.cs-nav-name{font-size:14px;font-weight:800;flex:1;}
+.cs-nav-links{display:flex;gap:14px;font-size:12px;font-weight:700;}
+.cs-nav-btn{padding:6px 14px;border-radius:50px;font-size:12px;font-weight:700;border:none;cursor:pointer;}
+
+/* Stats bar */
+.cs-stats{display:flex;border-bottom:1px solid var(--border);}
+.cs-stat{flex:1;padding:14px 12px;text-align:center;}
+.cs-stat-val{font-size:20px;font-weight:900;color:var(--text);}
+.cs-stat-lbl{font-size:10px;color:var(--text-secondary);font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+.cs-stat+.cs-stat{border-left:1px solid var(--border);}
+
+/* Products section */
+.cs-products{padding:20px 16px;}
+.cs-products-title{font-size:16px;font-weight:800;color:var(--text);margin-bottom:14px;}
+.cs-product-grid{display:grid;gap:12px;}
+.cs-product-grid.cols-1{grid-template-columns:1fr;}
+.cs-product-grid.cols-2{grid-template-columns:1fr 1fr;}
+.cs-product-grid.cols-3{grid-template-columns:1fr 1fr 1fr;}
+.cs-prod-card{background:white;border-radius:14px;overflow:hidden;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,0.05);}
+.cs-prod-img{width:100%;aspect-ratio:4/3;object-fit:cover;background:linear-gradient(135deg,#EEF0FF,#E8F0FF);display:flex;align-items:center;justify-content:center;color:#9CA3AF;}
+.cs-prod-body{padding:10px 12px;}
+.cs-prod-title{font-size:13px;font-weight:700;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cs-prod-price{font-size:14px;font-weight:900;}
+.cs-prod-btn{width:100%;padding:8px;text-align:center;font-size:12px;font-weight:700;border:none;cursor:pointer;border-radius:0 0 13px 13px;}
+
+/* About / Text / Heading / Quote / Two-column */
+.cs-about{padding:24px 20px;}
+.cs-about-title{font-size:16px;font-weight:800;margin-bottom:10px;}
+.cs-about-text{font-size:13px;line-height:1.6;color:var(--text-secondary);white-space:pre-wrap;}
+.cs-heading{padding:18px 20px 6px;font-size:20px;font-weight:900;}
+.cs-quote{padding:24px 20px;font-size:15px;font-weight:700;font-style:italic;text-align:center;position:relative;}
+.cs-quote::before{content:'\201C';font-size:48px;opacity:.15;position:absolute;top:4px;left:14px;font-family:Georgia,serif;}
+.cs-two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:20px;}
+.cs-two-col .col{font-size:12px;line-height:1.6;color:var(--text-secondary);white-space:pre-wrap;}
+.cs-image-text{display:flex;flex-direction:column;gap:14px;padding:20px;}
+.cs-image-text img{width:100%;border-radius:14px;aspect-ratio:16/10;object-fit:cover;background:linear-gradient(135deg,#EEF0FF,#E8F0FF);}
+.cs-image-text-title{font-size:16px;font-weight:800;}
+.cs-image-text-text{font-size:12px;line-height:1.6;color:var(--text-secondary);white-space:pre-wrap;}
+.cs-image-text-cta{display:inline-block;margin-top:6px;padding:10px 22px;border-radius:50px;font-size:12px;font-weight:800;text-decoration:none;}
+.cs-accordion{padding:20px;}
+.cs-acc-item{border:1.5px solid var(--border);border-radius:13px;margin-bottom:8px;overflow:hidden;}
+.cs-acc-q{padding:13px 16px;font-size:13px;font-weight:700;}
+.cs-acc-a{padding:0 16px 13px;font-size:12px;line-height:1.6;color:var(--text-secondary);}
+
+/* Testimonials */
+.cs-testimonials{padding:20px 16px;}
+.cs-testim-title{font-size:16px;font-weight:800;margin-bottom:14px;}
+.cs-testim-card{background:white;border-radius:14px;padding:14px 16px;border:1px solid var(--border);margin-bottom:10px;}
+.cs-testim-stars{color:#FBBC04;font-size:14px;margin-bottom:6px;}
+.cs-testim-text{font-size:13px;color:var(--text-secondary);line-height:1.5;}
+.cs-testim-author{font-size:12px;font-weight:700;margin-top:8px;}
+
+/* Footer */
+.cs-footer{padding:24px 20px;text-align:center;}
+.cs-footer-brand{font-size:18px;font-weight:900;margin-bottom:6px;}
+.cs-footer-links{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;font-size:12px;font-weight:600;margin-bottom:14px;}
+.cs-footer-copy{font-size:11px;color:var(--text-muted);}
+
+/* Announcement / Banner / Marquee */
+.cs-announce{padding:10px 16px;text-align:center;font-size:12px;font-weight:700;}
+.cs-marquee{padding:9px 0;overflow:hidden;white-space:nowrap;font-size:12px;font-weight:800;letter-spacing:.5px;}
+.cs-marquee span{display:inline-block;padding-right:24px;animation:marquee 14s linear infinite;}
+
+/* CTA section */
+.cs-cta{padding:32px 20px;text-align:center;}
+.cs-cta-title{font-size:20px;font-weight:900;margin-bottom:8px;}
+.cs-cta-sub{font-size:13px;margin-bottom:18px;opacity:.7;}
+.cs-cta-btn{display:inline-block;padding:13px 32px;border-radius:50px;font-size:15px;font-weight:800;border:none;cursor:pointer;text-decoration:none;}
+
+/* Trust badges / Badge row / Logos */
+.cs-trust{padding:16px 20px;display:flex;justify-content:center;gap:20px;flex-wrap:wrap;}
+.cs-trust-item{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;font-weight:700;color:var(--text-secondary);}
+.cs-trust-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;}
+.cs-badge-row{padding:14px 16px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap;}
+.cs-badge-chip{padding:6px 14px;border-radius:50px;font-size:11px;font-weight:800;background:var(--blue-light);color:var(--blue);}
+.cs-logos{padding:18px 20px;display:flex;justify-content:center;gap:18px;flex-wrap:wrap;font-size:26px;opacity:.6;}
+
+/* Divider / Spacer */
+.cs-divider{padding:8px 20px;display:flex;align-items:center;gap:12px;}
+.cs-divider-line{flex:1;height:1px;background:var(--border);}
+.cs-divider-text{font-size:11px;font-weight:700;color:var(--text-muted);}
+.cs-spacer{width:100%;}
+
+/* Contact / Newsletter / Map / Social */
+.cs-contact{padding:24px 20px;}
+.cs-contact-title{font-size:16px;font-weight:800;margin-bottom:6px;}
+.cs-contact-sub{font-size:12px;margin-bottom:16px;opacity:.65;line-height:1.5;}
+.cs-contact-grid{display:flex;flex-direction:column;gap:10px;}
+.cs-contact-row{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:13px;border:1.5px solid var(--border);text-decoration:none;font-size:13px;font-weight:600;}
+.cs-contact-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.cs-newsletter{padding:28px 20px;text-align:center;}
+.cs-newsletter-title{font-size:17px;font-weight:900;margin-bottom:6px;}
+.cs-newsletter-form{display:flex;gap:8px;margin-top:14px;}
+.cs-newsletter-form input{flex:1;padding:11px 14px;border-radius:50px;border:1.5px solid var(--border);font-size:12px;}
+.cs-newsletter-form button{padding:11px 20px;border-radius:50px;border:none;font-weight:800;font-size:12px;cursor:pointer;}
+.cs-map{padding:16px 20px;}
+.cs-map-box{width:100%;aspect-ratio:16/9;border-radius:14px;background:linear-gradient(135deg,#EEF0FF,#E8F0FF);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--text-secondary);font-size:12px;font-weight:700;}
+.cs-social{padding:16px 20px;display:flex;justify-content:center;gap:14px;}
+.cs-social-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;background:var(--blue-light);}
+
+/* Countdown */
+.cs-countdown{padding:28px 20px;text-align:center;}
+.cs-countdown-title{font-size:17px;font-weight:900;margin-bottom:14px;}
+.cs-countdown-grid{display:flex;justify-content:center;gap:10px;}
+.cs-countdown-cell{background:var(--text);color:white;border-radius:10px;padding:10px 14px;min-width:54px;}
+.cs-countdown-num{font-size:20px;font-weight:900;}
+.cs-countdown-lbl{font-size:9px;text-transform:uppercase;opacity:.6;letter-spacing:.5px;}
+
+/* Pricing */
+.cs-pricing{padding:20px 16px;}
+.cs-pricing-title{font-size:16px;font-weight:800;margin-bottom:14px;}
+.cs-pricing-grid{display:flex;flex-direction:column;gap:10px;}
+.cs-price-card{border:1.5px solid var(--border);border-radius:14px;padding:16px;position:relative;}
+.cs-price-card.featured{border-color:var(--blue);box-shadow:0 6px 20px rgba(108,142,255,.18);}
+.cs-price-badge{position:absolute;top:-9px;right:14px;background:var(--blue);color:white;font-size:9px;font-weight:800;padding:3px 10px;border-radius:50px;}
+.cs-price-name{font-size:13px;font-weight:800;margin-bottom:4px;}
+.cs-price-amt{font-size:22px;font-weight:900;margin-bottom:6px;}
+.cs-price-desc{font-size:11px;color:var(--text-secondary);}
+
+/* Team */
+.cs-team{padding:20px 16px;}
+.cs-team-title{font-size:16px;font-weight:800;margin-bottom:14px;}
+.cs-team-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.cs-team-card{text-align:center;}
+.cs-team-avatar{width:60px;height:60px;border-radius:50%;margin:0 auto 8px;background:linear-gradient(135deg,#EEF0FF,#E8F0FF);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#9CA3AF;overflow:hidden;}
+.cs-team-avatar img{width:100%;height:100%;object-fit:cover;}
+.cs-team-name{font-size:12px;font-weight:800;}
+.cs-team-role{font-size:10px;color:var(--text-secondary);}
+
+/* Steps */
+.cs-steps{padding:20px 16px;}
+.cs-steps-title{font-size:16px;font-weight:800;margin-bottom:14px;}
+.cs-step-item{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;}
+.cs-step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0;}
+.cs-step-text{font-size:13px;font-weight:700;padding-top:3px;}
+
+/* Gallery */
+.cs-gallery{padding:16px 20px;}
+.cs-gallery-title{font-size:16px;font-weight:800;margin-bottom:12px;}
+.cs-gallery-grid{display:grid;gap:8px;}
+.cs-gallery-grid.cols-2{grid-template-columns:1fr 1fr;}
+.cs-gallery-grid.cols-3{grid-template-columns:1fr 1fr 1fr;}
+.cs-gallery-img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;background:linear-gradient(135deg,#EEF0FF,#E8F0FF);display:flex;align-items:center;justify-content:center;font-size:28px;color:#9CA3AF;}
+
+/* FAQ */
+.cs-faq{padding:24px 20px;}
+.cs-faq-title{font-size:16px;font-weight:800;margin-bottom:14px;}
+.cs-faq-item{border:1.5px solid var(--border);border-radius:13px;margin-bottom:8px;overflow:hidden;}
+.cs-faq-q{padding:13px 16px;font-size:13px;font-weight:700;display:flex;justify-content:space-between;align-items:center;}
+.cs-faq-a{padding:0 16px 13px;font-size:12px;line-height:1.6;color:var(--text-secondary);}
+
+/* Video */
+.cs-video{padding:16px 20px;}
+.cs-video-title{font-size:16px;font-weight:800;margin-bottom:12px;}
+.cs-video-wrap{position:relative;border-radius:14px;overflow:hidden;aspect-ratio:16/9;background:#000;}
+.cs-video-wrap iframe,.cs-video-wrap video{width:100%;height:100%;border:none;}
+.cs-video-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#1E1B40,#2D2A5E);color:white;gap:10px;}
+.cs-video-placeholder-icon{font-size:40px;}
+.cs-video-placeholder-text{font-size:12px;opacity:.6;}
+
+/* Features / Cards / Icon grid */
+.cs-features{padding:24px 20px;}
+.cs-features-title{font-size:16px;font-weight:800;margin-bottom:14px;}
+.cs-feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.cs-feat-card{padding:16px 14px;border-radius:14px;border:1.5px solid var(--border);}
+.cs-feat-icon{font-size:24px;margin-bottom:8px;}
+.cs-feat-name{font-size:13px;font-weight:800;margin-bottom:4px;}
+.cs-feat-desc{font-size:11px;line-height:1.5;opacity:.65;}
+
+/* Single product */
+.cs-single-prod{padding:18px;}
+.cs-single-prod-card{border:1.5px solid var(--border);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;}
+
+/* Buttons block */
+.cs-buttons{padding:16px 20px;display:flex;flex-direction:column;gap:10px;}
+.cs-custom-btn{display:block;width:100%;padding:13px 20px;border-radius:50px;font-size:14px;font-weight:800;text-align:center;text-decoration:none;border:none;cursor:pointer;}
+.cs-custom-btn.outline{background:transparent!important;border:2px solid currentColor;}
+
+/* Embed / Raw HTML */
+.cs-embed{padding:16px 20px;}
+.cs-embed-placeholder{border:1.5px dashed var(--border);border-radius:12px;padding:18px;text-align:center;font-size:12px;color:var(--text-muted);font-weight:600;}
+
+/* HTML export button */
+.tb-btn.export{background:rgba(60,188,160,0.2);border-color:rgba(60,188,160,0.4);color:#3CBCA0;}
+
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes zoomIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+@keyframes slideLeft{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:translateX(0)}}
+.anim-fadeUp{animation:fadeUp .5s ease both;}
+.anim-fadeIn{animation:fadeIn .5s ease both;}
+.anim-zoomIn{animation:zoomIn .5s ease both;}
+.anim-slideLeft{animation:slideLeft .5s ease both;}
+
+/* ── MODALS / OVERLAY ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:500;display:none;align-items:center;justify-content:center;padding:16px;}
+.overlay.open{display:flex;}
+.modal{background:white;border-radius:20px;padding:24px;width:90%;max-width:440px;max-height:85vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,0.25);position:relative;}
+.modal.wide{max-width:680px;}
+.modal-title{font-size:17px;font-weight:800;margin-bottom:18px;color:var(--text);}
+.modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;background:#F3F4F6;border:none;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;}
+.modal-actions{display:flex;gap:10px;margin-top:20px;}
+.modal-actions .prop-btn{flex:1;}
+
+/* ── AUTH GATE ── */
+#auth-gate{
+  position:fixed;inset:0;background:#1E1B40;
+  display:none;align-items:center;justify-content:center;z-index:9999;
+  flex-direction:column;text-align:center;padding:32px;
+}
+#auth-gate.show{display:flex;}
+#auth-gate .auth-card{background:white;border-radius:20px;padding:28px;width:100%;max-width:360px;text-align:left;}
+#auth-gate h1{font-size:22px;font-weight:900;color:var(--text);margin-bottom:6px;}
+#auth-gate p{font-size:13px;color:var(--text-secondary);margin-bottom:18px;line-height:1.5;}
+#auth-gate .prop-group{margin-bottom:12px;}
+#auth-error{color:var(--red);font-size:12px;font-weight:600;margin-top:8px;min-height:16px;}
+
+/* ── LOADING ── */
+#page-loader{position:fixed;inset:0;background:#1E1B40;display:flex;align-items:center;justify-content:center;z-index:9998;flex-direction:column;gap:16px;}
+#page-loader svg{animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+#page-loader p{color:rgba(255,255,255,0.5);font-size:13px;}
+
+/* ── MOBILE RESPONSIVE ── */
+@media(max-width:900px){
+  #sidebar{display:none;}
+  #prop-panel{display:none;}
+  #canvas-wrap{padding:12px;}
+  #store-canvas{width:100%;max-width:390px;}
+  body.mobile-panel-open #sidebar,
+  body.mobile-panel-open #prop-panel{
+    display:flex;position:fixed;top:var(--toolbar-h);bottom:0;z-index:250;
+  }
+  body.mobile-panel-open #sidebar{left:0;width:80vw;max-width:300px;}
+  body.mobile-panel-open #prop-panel{right:0;width:80vw;max-width:320px;}
+}
+@media(max-width:600px){
+  .tb-btn span{display:none;}
+  .tb-btn{padding:7px 9px;}
+  #tb-slug{display:none;}
+  #tb-store-name{max-width:none;}
+}
+
+/* ── PRODUCT PICKER GRID ── */
+.picker-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-height:280px;overflow-y:auto;}
+.picker-item{border:2px solid var(--border);border-radius:12px;padding:10px;cursor:pointer;transition:all .1s;display:flex;gap:9px;align-items:center;}
+.picker-item:hover{border-color:var(--blue);background:var(--blue-light);}
+.picker-item.selected{border-color:var(--blue);background:var(--blue-light);}
+.picker-thumb{width:40px;height:40px;border-radius:8px;object-fit:cover;background:#EEF0FF;flex-shrink:0;}
+.picker-title{font-size:12px;font-weight:700;line-height:1.3;}
+.picker-price{font-size:11px;color:var(--blue);font-weight:700;}
+
+/* Drag handle for reordering */
+.drag-handle{
+  position:absolute;left:0;top:0;bottom:0;width:28px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:grab;opacity:0;transition:opacity .12s;
+  background:rgba(108,142,255,0.12);
+  touch-action:none;
+  z-index:10;
+}
+.cs-section:hover .drag-handle{opacity:1;}
+.drag-handle svg{width:14px;height:14px;stroke:var(--blue);fill:none;stroke-width:2;}
+.cs-section.drag-over{outline:2px solid #F5A94E!important;background:rgba(245,169,78,0.06);}
+.cs-section.dragging{opacity:0.4;}
+
+/* Code / JSON modal */
+.code-view{font-family:'SF Mono',Consolas,Menlo,monospace;font-size:11px;background:#1E1B40;color:#A8BFFF;border-radius:12px;padding:14px;max-height:50vh;overflow:auto;white-space:pre-wrap;word-break:break-all;}
+
+/* Toast */
+#toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:#1E1B40;color:white;padding:10px 20px;border-radius:50px;
+  font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:opacity .25s;
+  pointer-events:none;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis;
+}
+#toast.show{opacity:1;}
+</style>
+</head>
+<body>
+
+<!-- Loading screen -->
+<div id="page-loader">
+  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#6C8EFF" stroke-width="2.5">
+    <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+  </svg>
+  <p>Loading store designer…</p>
+</div>
+
+<!-- Auth gate (sign in with your Brixnode account) -->
+<div id="auth-gate">
+  <div class="auth-card">
+    <h1>🎨 Store Designer Pro</h1>
+    <p>Sign in with your Brixnode creator account to design your storefront.</p>
+    <div class="prop-group">
+      <div class="prop-label">Email</div>
+      <input class="prop-input" id="auth-email" type="email" placeholder="you@example.com" autocomplete="username">
+    </div>
+    <div class="prop-group">
+      <div class="prop-label">Password</div>
+      <input class="prop-input" id="auth-password" type="password" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="prop-btn primary" style="width:100%" onclick="signIn()">Sign in</button>
+    <div id="auth-error"></div>
+    <p style="margin-top:14px;font-size:12px;text-align:center">
+      <a href="/auth" style="color:var(--blue);font-weight:700;text-decoration:none">Don't have an account? Sign up on Brixnode →</a>
+    </p>
+  </div>
+</div>
+
+<!-- TOP TOOLBAR -->
+<div id="toolbar">
+  <div class="tb-brand">
+    <svg width="20" height="20" viewBox="0 0 100 100" fill="none"><defs><linearGradient id="tg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#6C8EFF"/><stop offset="100%" stop-color="#C4B5FD"/></linearGradient></defs><rect width="100" height="100" rx="22" fill="url(#tg)"/><path d="M50 18L22 33l28 14 28-14L50 18zM22 60l28 14 28-14M22 46l28 14 28-14" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+    Store Designer Pro
+  </div>
+  <input id="tb-store-name" type="text" placeholder="Store name…" oninput="onStoreNameChange(this.value)">
+  <span id="tb-slug"></span>
+  <div class="tb-sep"></div>
+  <button class="tb-btn icon-only" id="undo-btn" onclick="undo()" title="Undo (Ctrl+Z)" disabled>
+    <svg viewBox="0 0 24 24"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
+  </button>
+  <button class="tb-btn icon-only" id="redo-btn" onclick="redo()" title="Redo (Ctrl+Shift+Z)" disabled>
+    <svg viewBox="0 0 24 24"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3L21 13"/></svg>
+  </button>
+  <div class="tb-sep"></div>
+  <button class="tb-btn" onclick="openAddSectionModal()" title="Add Section">
+    <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    <span>Section</span>
+  </button>
+  <button class="tb-btn" onclick="openProductPicker()" title="Add Products">
+    <svg viewBox="0 0 24 24"><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16v-2"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+    <span>Products</span>
+  </button>
+  <button class="tb-btn" onclick="openCodeModal('export')" title="Export as single HTML file">
+    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    <span>Export HTML</span>
+  </button>
+  <button class="tb-btn" onclick="openCodeModal('json')" title="Export / import JSON">
+    <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+    <span>JSON</span>
+  </button>
+  <div class="tb-right">
+    <span id="save-status">All saved</span>
+    <button class="tb-btn" onclick="previewStore()" title="Preview">
+      <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      <span>Preview</span>
+    </button>
+    <button class="tb-btn primary" onclick="saveStore(true)" title="Publish">
+      <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      <span>Publish</span>
+    </button>
+    <a href="/" class="tb-btn">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      <span>Back</span>
+    </a>
+  </div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div id="main">
+
+  <!-- LEFT SIDEBAR -->
+  <div id="sidebar">
+    <div class="sb-header">Design Tools</div>
+    <div class="sb-tabs">
+      <div class="sb-tab active" data-tab="sections" onclick="switchSbTab('sections')">Sections</div>
+      <div class="sb-tab" data-tab="layers" onclick="switchSbTab('layers')">Layers</div>
+      <div class="sb-tab" data-tab="themes" onclick="switchSbTab('themes')">Themes</div>
+      <div class="sb-tab" data-tab="fonts" onclick="switchSbTab('fonts')">Fonts</div>
+      <div class="sb-tab" data-tab="global" onclick="switchSbTab('global')">Global</div>
+    </div>
+
+    <div id="sb-content">
+      <!-- Sections tab -->
+      <div id="sb-tab-sections"></div>
+
+      <!-- Layers tab -->
+      <div id="sb-tab-layers" style="display:none">
+        <div class="sb-section">
+          <div class="sb-section-title">Page sections — drag to reorder</div>
+          <div id="layers-list"></div>
+        </div>
+      </div>
+
+      <!-- Themes tab -->
+      <div id="sb-tab-themes" style="display:none">
+        <div class="sb-section">
+          <div class="sb-section-title">Theme presets</div>
+          <div class="theme-grid" id="theme-presets"></div>
+        </div>
+        <div class="sb-section">
+          <div class="sb-section-title">Custom colors</div>
+          <div id="custom-colors"></div>
+        </div>
+        <div class="sb-section">
+          <div class="sb-section-title">Layout</div>
+          <div id="layout-settings"></div>
+        </div>
+      </div>
+
+      <!-- Fonts tab -->
+      <div id="sb-tab-fonts" style="display:none">
+        <div class="sb-section">
+          <div class="sb-section-title">Body font</div>
+          <div id="font-list"></div>
+        </div>
+        <div class="sb-section">
+          <div class="sb-section-title">Heading font</div>
+          <div id="heading-font-list"></div>
+        </div>
+        <div class="sb-section">
+          <div class="sb-section-title">Text scale</div>
+          <div style="padding:4px 6px">
+            <div style="color:rgba(255,255,255,0.5);font-size:11px;margin-bottom:8px">Base size</div>
+            <input type="range" class="prop-slider" min="12" max="18" value="14" oninput="setFontScale(this.value)" id="font-scale-slider" style="width:100%">
+          </div>
+        </div>
+      </div>
+
+      <!-- Global tab (advanced) -->
+      <div id="sb-tab-global" style="display:none">
+        <div class="sb-section">
+          <div class="sb-section-title">Page settings</div>
+          <div id="global-settings"></div>
+        </div>
+        <div class="sb-section">
+          <div class="sb-section-title">Custom CSS</div>
+          <textarea class="prop-input prop-textarea prop-code" id="global-css" placeholder="/* applies to your published store */" oninput="setGlobalCss(this.value)" style="width:100%;color:rgba(255,255,255,.85);background:rgba(0,0,0,.25);border-color:rgba(255,255,255,.12)"></textarea>
+          <p class="prop-hint" style="color:rgba(255,255,255,.35)">Advanced: raw CSS injected into your published storefront.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CANVAS AREA -->
+  <div id="canvas-wrap">
+    <div id="zoom-bar">
+      <button class="zoom-btn" onclick="zoomBy(-10)">−</button>
+      <span id="zoom-val">100%</span>
+      <button class="zoom-btn" onclick="zoomBy(10)">+</button>
+      <div style="width:1px;height:16px;background:var(--border);margin:0 4px"></div>
+      <button class="zoom-btn" onclick="fitCanvas()" title="Fit to screen" style="width:auto;padding:0 10px;border-radius:8px;font-size:11px">Fit</button>
+      <div style="width:1px;height:16px;background:var(--border);margin:0 4px"></div>
+      <div class="device-toggle">
+        <button class="device-btn active" data-device="mobile" onclick="setDevice('mobile')">📱 Mobile</button>
+        <button class="device-btn" data-device="desktop" onclick="setDevice('desktop')">🖥️ Desktop</button>
+      </div>
+    </div>
+    <div id="store-canvas" class="device-mobile">
+      <!-- Sections render here -->
+    </div>
+  </div>
+
+  <!-- RIGHT PROPERTIES PANEL -->
+  <div id="prop-panel">
+    <div id="prop-panel-header">
+      <span id="prop-panel-title">Properties</span>
+      <div class="ph-tabs" id="prop-panel-tabs" style="display:none">
+        <div class="ph-tab active" data-ptab="content" onclick="switchPropTab('content')">Content</div>
+        <div class="ph-tab" data-ptab="design" onclick="switchPropTab('design')">Design</div>
+        <div class="ph-tab" data-ptab="advanced" onclick="switchPropTab('advanced')">Advanced</div>
+      </div>
+    </div>
+    <div id="prop-panel-body">
+      <div style="color:var(--text-muted);font-size:13px;text-align:center;padding:40px 0">
+        Click a section on the canvas to edit its properties
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODALS ── -->
+
+<!-- Add Section Modal -->
+<div class="overlay" id="add-section-modal">
+  <div class="modal wide" style="position:relative">
+    <button class="modal-close" onclick="closeModal('add-section-modal')">✕</button>
+    <div class="modal-title">Add a section</div>
+    <div class="sb-tabs" id="as-cats" style="padding:0 0 12px"></div>
+    <div class="el-grid" id="as-grid" style="grid-template-columns:1fr 1fr 1fr"></div>
+  </div>
+</div>
+
+<!-- Product Picker Modal -->
+<div class="overlay" id="product-picker-modal">
+  <div class="modal" style="position:relative">
+    <button class="modal-close" onclick="closeModal('product-picker-modal')">✕</button>
+    <div class="modal-title">Add Products Section</div>
+    <div class="prop-group">
+      <div class="prop-label">Section Title</div>
+      <input class="prop-input" id="pp-title" value="Featured Products">
+    </div>
+    <div class="prop-group">
+      <div class="prop-label">Display Layout</div>
+      <select class="prop-select" id="pp-layout">
+        <option value="cols-2">2 Columns</option>
+        <option value="cols-1">1 Column (Full Width)</option>
+        <option value="cols-3">3 Columns</option>
+      </select>
+    </div>
+    <div class="prop-group">
+      <div class="prop-label">Select products (leave empty to show all)</div>
+      <div class="picker-grid" id="picker-grid"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="prop-btn" onclick="closeModal('product-picker-modal')">Cancel</button>
+      <button class="prop-btn primary" onclick="confirmProductPicker()">Add Section</button>
+    </div>
+  </div>
+</div>
+
+<!-- Code / Export / JSON Modal -->
+<div class="overlay" id="code-modal">
+  <div class="modal wide" style="position:relative">
+    <button class="modal-close" onclick="closeModal('code-modal')">✕</button>
+    <div class="modal-title" id="code-modal-title">Export</div>
+    <div id="code-modal-body"></div>
+  </div>
+</div>
+
+<!-- Preview Modal -->
+<div class="overlay" id="preview-modal">
+  <div class="modal wide" style="position:relative;max-width:480px;padding:12px">
+    <button class="modal-close" onclick="closeModal('preview-modal')">✕</button>
+    <div class="modal-title" style="padding:8px 8px 0">Live preview</div>
+    <div style="padding:8px;max-height:75vh;overflow:auto;border-radius:14px">
+      <div id="preview-canvas" style="border-radius:16px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.15)"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+/* ════════════════════════════════════════════════════════════
+   CONFIG — wired to Brixnode's Supabase project
+   ════════════════════════════════════════════════════════════ */
+const SUPABASE_URL = 'https://fycresqsgjqpfgvarxxq.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ5Y3Jlc3FzZ2pxcGZndmFyeHhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5MTI4ODgsImV4cCI6MjA5NjQ4ODg4OH0.dgn7Rp8FjPBTkocSfvABOFB83J9mtJz_rrsCAtQc9_k';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* ════════════════════════════════════════════════════════════
+   STATE
+   ════════════════════════════════════════════════════════════ */
+let state = {
+  user: null,
+  profile: null,
+  storeName: '',
+  blocks: [],
+  theme: {},
+};
+let selectedId = null;
+let propTab = 'content';
+let device = 'mobile';
+let zoomPct = 100;
+let dirty = false;
+let saving = false;
+let saveTimer = null;
+let pickerSelected = new Set();
+let allProducts = [];
+
+// Undo/redo history (stores JSON snapshots of {blocks, theme, storeName})
+let history = [];
+let historyIndex = -1;
+const HISTORY_LIMIT = 50;
+
+function uid() { return Math.random().toString(36).slice(2, 9); }
+
+/* ════════════════════════════════════════════════════════════
+   BOOT
+   ════════════════════════════════════════════════════════════ */
+boot();
+
+async function boot() {
+  const { data: sess } = await sb.auth.getSession();
+  if (!sess?.session) {
+    document.getElementById('page-loader').style.display = 'none';
+    document.getElementById('auth-gate').classList.add('show');
+    return;
+  }
+  await afterLogin(sess.session.user);
+}
+
+async function signIn() {
+  const email = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
+  const errEl = document.getElementById('auth-error');
+  errEl.textContent = '';
+  if (!email || !password) { errEl.textContent = 'Enter your email and password.'; return; }
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  if (error) { errEl.textContent = error.message; return; }
+  document.getElementById('auth-gate').classList.remove('show');
+  document.getElementById('page-loader').style.display = 'flex';
+  await afterLogin(data.user);
+}
+
+async function afterLogin(user) {
+  state.user = user;
+  const { data: profile, error } = await sb
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .maybeSingle();
+  if (error || !profile) {
+    document.getElementById('page-loader').style.display = 'none';
+    toast('Could not load your profile — try again', 'error');
+    document.getElementById('auth-gate').classList.add('show');
+    return;
+  }
+  state.profile = profile;
+  state.storeName = profile.store_name || '';
+  state.theme = (profile.store_theme && Object.keys(profile.store_theme).length) ? profile.store_theme : THEME_PRESETS[0].theme;
+  state.blocks = (profile.store_blocks && profile.store_blocks.length)
+    ? profile.store_blocks
+    : [
+        { id: uid(), type: 'hero', props: defaultProps('hero') },
+        { id: uid(), type: 'products', props: defaultProps('products') },
+      ];
+
+  document.getElementById('tb-store-name').value = state.storeName;
+  document.getElementById('tb-slug').textContent = profile.username ? `brixnode.com/@${profile.username}` : '';
+  document.getElementById('global-css').value = (state.theme.customCss || '');
+
+  loadAllProducts();
+  initSidebar();
+  pushHistory();
+  renderAll();
+
+  document.getElementById('page-loader').style.display = 'none';
+}
+
+async function loadAllProducts() {
+  if (!state.user) return;
+  const { data } = await sb
+    .from('products')
+    .select('*')
+    .eq('creator_id', state.user.id)
+    .order('created_at', { ascending: false })
+    .limit(200);
+  allProducts = data || [];
+}
+
+/* ════════════════════════════════════════════════════════════
+   SECTION REGISTRY — matches Brixnode's StoreBlockType, plus
+   a few new advanced block types (marked NEW).
+   ════════════════════════════════════════════════════════════ */
+const SECTIONS = [
+  // Headers / hero
+  { type: 'hero', label: 'Hero banner', icon: iHero(), cat: 'Headers' },
+  { type: 'banner', label: 'Top banner', icon: iBanner(), cat: 'Headers' },
+  { type: 'announcement', label: 'Announcement', icon: iAnnounce(), cat: 'Headers' },
+  { type: 'marquee', label: 'Marquee', icon: iMarquee(), cat: 'Headers' },
+  { type: 'nav', label: 'Nav bar', icon: iNav(), cat: 'Headers' },
+  // Content
+  { type: 'heading', label: 'Heading', icon: iHeading(), cat: 'Content' },
+  { type: 'text', label: 'Text block', icon: iText(), cat: 'Content' },
+  { type: 'quote', label: 'Quote', icon: iQuote(), cat: 'Content' },
+  { type: 'two_column', label: 'Two columns', icon: iTwoCol(), cat: 'Content' },
+  { type: 'image_text', label: 'Image + text', icon: iImageText(), cat: 'Content' },
+  { type: 'accordion', label: 'Accordion', icon: iAccordion(), cat: 'Content' },
+  // Commerce
+  { type: 'products', label: 'Products grid', icon: iProducts(), cat: 'Commerce' },
+  { type: 'product_single', label: 'Single product', icon: iTag(), cat: 'Commerce' },
+  { type: 'pricing', label: 'Pricing table', icon: iPricing(), cat: 'Commerce' },
+  { type: 'cta_banner', label: 'CTA banner', icon: iCta(), cat: 'Commerce' },
+  { type: 'countdown', label: 'Countdown', icon: iCountdown(), cat: 'Commerce' },
+  // Social proof
+  { type: 'testimonial', label: 'Testimonial', icon: iTestimonial(), cat: 'Social proof' },
+  { type: 'stats', label: 'Stats', icon: iStats(), cat: 'Social proof' },
+  { type: 'logos', label: 'Logo cloud', icon: iLogos(), cat: 'Social proof' },
+  { type: 'team', label: 'Team', icon: iTeam(), cat: 'Social proof' },
+  { type: 'badge_row', label: 'Trust badges', icon: iBadge(), cat: 'Social proof' },
+  // Features
+  { type: 'features', label: 'Features grid', icon: iFeatures(), cat: 'Features' },
+  { type: 'cards', label: 'Cards', icon: iCards(), cat: 'Features' },
+  { type: 'icon_grid', label: 'Icon grid', icon: iIconGrid(), cat: 'Features' },
+  { type: 'steps', label: 'Steps / how-to', icon: iSteps(), cat: 'Features' },
+  { type: 'faq', label: 'FAQ', icon: iFaq(), cat: 'Features' },
+  // Media
+  { type: 'image', label: 'Image', icon: iImage(), cat: 'Media' },
+  { type: 'gallery', label: 'Gallery', icon: iGallery(), cat: 'Media' },
+  { type: 'video', label: 'Video', icon: iVideo(), cat: 'Media' },
+  // Engagement
+  { type: 'newsletter', label: 'Newsletter', icon: iMail(), cat: 'Engagement' },
+  { type: 'social', label: 'Social links', icon: iLink(), cat: 'Engagement' },
+  { type: 'contact', label: 'Contact form', icon: iContact(), cat: 'Engagement' },
+  { type: 'map', label: 'Map', icon: iMap(), cat: 'Engagement' },
+  // Advanced
+  { type: 'button', label: 'Button', icon: iButton(), cat: 'Advanced' },
+  { type: 'embed', label: 'Embed code', icon: iCode(), cat: 'Advanced' },
+  { type: 'html', label: 'Raw HTML', icon: iHtml(), cat: 'Advanced' },
+  { type: 'divider', label: 'Divider', icon: iDivider(), cat: 'Advanced' },
+  { type: 'spacer', label: 'Spacer', icon: iSpacer(), cat: 'Advanced' },
+  { type: 'footer', label: 'Footer', icon: iFooter(), cat: 'Advanced' },
+];
+
+const SECTION_CATS = [...new Set(SECTIONS.map(s => s.cat))];
+
+const FONTS = ['Inter', 'Poppins', 'Montserrat', 'Roboto', 'Lato', 'Playfair Display', 'Lora', 'Merriweather', 'Oswald', 'Roboto Mono', 'Georgia', 'Courier New', 'Space Grotesk', 'DM Sans', 'Outfit', 'Sora'];
+
+const THEME_PRESETS = [
+  { name: 'Indigo', theme: { primary: '#6366f1', accent: '#a855f7', bg: '#ffffff', text: '#0f172a', font: 'Inter' } },
+  { name: 'Midnight', theme: { primary: '#818cf8', accent: '#22d3ee', bg: '#0b1120', text: '#e2e8f0', font: 'Inter' } },
+  { name: 'Emerald', theme: { primary: '#10b981', accent: '#14b8a6', bg: '#f0fdf4', text: '#064e3b', font: 'Poppins' } },
+  { name: 'Sunset', theme: { primary: '#f97316', accent: '#ec4899', bg: '#fff7ed', text: '#431407', font: 'Montserrat' } },
+  { name: 'Rose', theme: { primary: '#e11d48', accent: '#f43f5e', bg: '#fff1f2', text: '#4c0519', font: 'Playfair Display' } },
+  { name: 'Slate Pro', theme: { primary: '#0f172a', accent: '#475569', bg: '#f8fafc', text: '#0f172a', font: 'Inter' } },
+  { name: 'Ocean', theme: { primary: '#0ea5e9', accent: '#6366f1', bg: '#f0f9ff', text: '#0c4a6e', font: 'Lora' } },
+  { name: 'Gold Luxe', theme: { primary: '#b45309', accent: '#d97706', bg: '#fffbeb', text: '#451a03', font: 'Playfair Display' } },
+  { name: 'Cyberpunk', theme: { primary: '#d946ef', accent: '#22d3ee', bg: '#09090b', text: '#fafafa', font: 'Roboto Mono' } },
+  { name: 'Mint', theme: { primary: '#059669', accent: '#84cc16', bg: '#ffffff', text: '#14532d', font: 'Montserrat' } },
+  { name: 'Berry', theme: { primary: '#7c3aed', accent: '#db2777', bg: '#faf5ff', text: '#3b0764', font: 'Poppins' } },
+  { name: 'Mono', theme: { primary: '#111827', accent: '#6b7280', bg: '#ffffff', text: '#111827', font: 'Courier New' } },
+];
+
+const ANIMATIONS = [
+  { value: '', label: 'None' },
+  { value: 'fadeUp', label: 'Fade up' },
+  { value: 'fadeIn', label: 'Fade in' },
+  { value: 'zoomIn', label: 'Zoom in' },
+  { value: 'slideLeft', label: 'Slide in' },
+];
+
+function defaultProps(type) {
+  switch (type) {
+    case 'hero': return { title: 'Welcome to my store', subtitle: 'Premium digital products', image: '', cta: 'Browse products', ctaUrl: '#products' };
+    case 'banner': return { text: '🔥 Limited-time launch offer' };
+    case 'announcement': return { text: '📢 New products dropped!' };
+    case 'marquee': return { text: '🔥 Premium products · Instant delivery · ' };
+    case 'nav': return { title: '', links: ['Home|#', 'Products|#products', 'Contact|#contact'] };
+    case 'heading': return { text: 'Section title', align: 'left' };
+    case 'text': return { text: 'Add your description here...', align: 'left' };
+    case 'quote': return { text: 'A great quote about your work' };
+    case 'two_column': return { left: 'Left column content', right: 'Right column content' };
+    case 'image_text': return { title: 'Feature title', text: 'Describe it here', image: '', cta: 'Learn more', ctaUrl: '#' };
+    case 'products': return { title: 'Featured products', limit: 6, layout: 'cols-2', ids: [] };
+    case 'product_single': return { productId: '' };
+    case 'features': case 'cards': case 'icon_grid':
+      return { title: 'Why choose us', items: ['Fast|Instant delivery|⚡', 'Secure|Verified payments|🔒', 'Quality|Top creators|⭐'] };
+    case 'steps': return { title: 'How it works', items: ['Discover|Browse the catalog', 'Pay|Checkout securely', 'Get access|Instant delivery'] };
+    case 'stats': return { items: ['10k+|Customers', '4.9★|Rating', '500+|Products'] };
+    case 'pricing': return { title: 'Plans', items: ['Basic|$9|1 license', 'Pro|$29|Unlimited|⭐'] };
+    case 'faq': return { title: 'FAQ', items: ['How do I get access?|After approval you get a private link.', 'Refunds?|Case-by-case.'] };
+    case 'accordion': return { items: ['Section 1|Content', 'Section 2|More'] };
+    case 'testimonial': return { quote: 'Amazing products! Fast delivery and great support.', author: 'Happy customer' };
+    case 'team': return { title: 'Meet the team', items: ['Jane|Founder', 'Sam|Designer'] };
+    case 'logos': return { items: ['🅰️', '🅱️', '🆎', '🅾️'] };
+    case 'badge_row': return { items: ['✓ Secure', '⚡ Instant', '🔒 Verified'] };
+    case 'cta_banner': return { title: 'Ready to start?', subtitle: 'Join thousands of buyers', cta: 'Get started', ctaUrl: '#products' };
+    case 'newsletter': return { title: 'Join the newsletter', subtitle: 'Get product drops & offers in your inbox' };
+    case 'countdown': return { title: 'Offer ends soon', endsAt: '' };
+    case 'social': return { items: ['🐦|#', '📸|#', '▶️|#', '💼|#'] };
+    case 'contact': return { title: 'Contact us', subtitle: 'We usually reply within a day' };
+    case 'map': return { location: 'New York, USA' };
+    case 'gallery': return { items: [] };
+    case 'image': return { url: '', caption: '' };
+    case 'video': return { url: '' };
+    case 'button': return { label: 'Click me', url: '#' };
+    case 'embed': case 'html': return { code: '' };
+    case 'footer': return { text: '', links: ['Privacy|/page/privacy', 'Terms|/page/terms'] };
+    case 'divider': return {};
+    case 'spacer': return { height: 40 };
+    default: return {};
+  }
+}
+
+function defaultStyle() {
+  return {
+    paddingY: '', paddingX: '', bg: '', textColor: '',
+    radius: '', maxWidth: '', animation: '', hideMobile: false, hideDesktop: false,
+    customClass: '', customCss: '',
+  };
+}
+
+const LIST_BLOCKS = new Set(['features', 'cards', 'icon_grid', 'steps', 'stats', 'pricing', 'faq', 'accordion', 'team', 'logos', 'badge_row', 'social', 'gallery', 'nav', 'footer']);
+
+/* ════════════════════════════════════════════════════════════
+   ICONS (small inline SVGs for the sidebar)
+   ════════════════════════════════════════════════════════════ */
+function svg(paths){ return `<svg viewBox="0 0 24 24">${paths}</svg>`; }
+function iHero(){ return svg('<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/>'); }
+function iBanner(){ return svg('<rect x="3" y="6" width="18" height="4" rx="1"/><line x1="3" y1="14" x2="21" y2="14"/><line x1="3" y1="18" x2="14" y2="18"/>'); }
+function iAnnounce(){ return svg('<path d="M3 11l18-5v12L3 14v-3z"/><path d="M11 16l1 4h2l1-4"/>'); }
+function iMarquee(){ return svg('<rect x="2" y="9" width="20" height="6" rx="3"/><line x1="6" y1="12" x2="18" y2="12"/>'); }
+function iNav(){ return svg('<line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12" stroke-dasharray="2 3"/><line x1="3" y1="18" x2="21" y2="18" stroke-dasharray="2 3"/>'); }
+function iHeading(){ return svg('<path d="M6 4v16M18 4v16M6 12h12"/>'); }
+function iText(){ return svg('<line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="14" y2="18"/>'); }
+function iQuote(){ return svg('<path d="M7 7h4v6H7a4 4 0 0 1 0-8M17 7h4v6h-4a4 4 0 0 1 0-8" />'); }
+function iTwoCol(){ return svg('<rect x="3" y="4" width="8" height="16" rx="1"/><rect x="13" y="4" width="8" height="16" rx="1"/>'); }
+function iImageText(){ return svg('<rect x="3" y="4" width="8" height="8" rx="1"/><line x1="13" y1="6" x2="21" y2="6"/><line x1="13" y1="10" x2="19" y2="10"/><line x1="3" y1="16" x2="21" y2="16"/><line x1="3" y1="20" x2="15" y2="20"/>'); }
+function iAccordion(){ return svg('<rect x="3" y="3" width="18" height="5" rx="1"/><rect x="3" y="10" width="18" height="5" rx="1"/><rect x="3" y="17" width="18" height="4" rx="1"/>'); }
+function iProducts(){ return svg('<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'); }
+function iTag(){ return svg('<path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3H4a1 1 0 0 0-1 1v5.59a2 2 0 0 0 .59 1.41l9.58 9.59a2 2 0 0 0 2.82 0l4.6-4.6a2 2 0 0 0 0-2.58z"/><circle cx="7.5" cy="7.5" r="1"/>'); }
+function iPricing(){ return svg('<rect x="2" y="4" width="6" height="16" rx="1"/><rect x="9" y="2" width="6" height="20" rx="1" stroke-width="2.4"/><rect x="16" y="4" width="6" height="16" rx="1"/>'); }
+function iCta(){ return svg('<rect x="2" y="8" width="20" height="8" rx="4"/><path d="M9 12h6"/>'); }
+function iCountdown(){ return svg('<circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/>'); }
+function iTestimonial(){ return svg('<circle cx="8" cy="8" r="3"/><path d="M2 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M17 7h4v6h-2l-2 2v-2h0z"/>'); }
+function iStats(){ return svg('<path d="M3 21h18M6 21V10M12 21V4M18 21v-7"/>'); }
+function iLogos(){ return svg('<circle cx="7" cy="8" r="3"/><circle cx="17" cy="8" r="3"/><circle cx="7" cy="17" r="3"/><circle cx="17" cy="17" r="3"/>'); }
+function iTeam(){ return svg('<circle cx="9" cy="7" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3 21v-1a5 5 0 0 1 5-5h2a5 5 0 0 1 5 5v1"/><path d="M16 13a4 4 0 0 1 4 4v1"/>'); }
+function iBadge(){ return svg('<path d="M12 2l3 6 6 1-4.5 4.5L18 20l-6-3-6 3 1.5-6.5L3 9l6-1z"/>'); }
+function iFeatures(){ return svg('<rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/>'); }
+function iCards(){ return svg('<rect x="3" y="5" width="8" height="14" rx="2"/><rect x="13" y="5" width="8" height="14" rx="2"/>'); }
+function iIconGrid(){ return svg('<circle cx="6" cy="6" r="2"/><circle cx="12" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="6" cy="14" r="2"/><circle cx="12" cy="14" r="2"/><circle cx="18" cy="14" r="2"/>'); }
+function iSteps(){ return svg('<circle cx="5" cy="6" r="2"/><circle cx="5" cy="12" r="2"/><circle cx="5" cy="18" r="2"/><line x1="10" y1="6" x2="20" y2="6"/><line x1="10" y1="12" x2="20" y2="12"/><line x1="10" y1="18" x2="20" y2="18"/>'); }
+function iFaq(){ return svg('<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-1 .5-1.5 1-1.5 2.2M12 17h.01"/>'); }
+function iImage(){ return svg('<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>'); }
+function iGallery(){ return svg('<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'); }
+function iVideo(){ return svg('<rect x="2" y="4" width="20" height="16" rx="2"/><path d="M10 9l5 3-5 3z"/>'); }
+function iMail(){ return svg('<rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/>'); }
+function iLink(){ return svg('<path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1.5 1.5M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1.5-1.5"/>'); }
+function iContact(){ return svg('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>'); }
+function iMap(){ return svg('<path d="M12 21s-7-5.5-7-10a7 7 0 1 1 14 0c0 4.5-7 10-7 10z"/><circle cx="12" cy="11" r="2.5"/>'); }
+function iButton(){ return svg('<rect x="3" y="9" width="18" height="6" rx="3"/>'); }
+function iCode(){ return svg('<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>'); }
+function iHtml(){ return svg('<polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/>'); }
+function iDivider(){ return svg('<line x1="3" y1="12" x2="21" y2="12"/><circle cx="12" cy="12" r="2"/>'); }
+function iSpacer(){ return svg('<path d="M12 3v6M12 15v6M5 9l7-6 7 6M5 15l7 6 7-6"/>'); }
+function iFooter(){ return svg('<rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="16" x2="21" y2="16"/>'); }
+
+/* ════════════════════════════════════════════════════════════
+   HISTORY (undo / redo)
+   ════════════════════════════════════════════════════════════ */
+function snapshot() {
+  return JSON.stringify({ blocks: state.blocks, theme: state.theme, storeName: state.storeName });
+}
+function pushHistory() {
+  const snap = snapshot();
+  if (history[historyIndex] === snap) return;
+  history = history.slice(0, historyIndex + 1);
+  history.push(snap);
+  if (history.length > HISTORY_LIMIT) history.shift();
+  historyIndex = history.length - 1;
+  updateUndoRedoButtons();
+}
+function undo() {
+  if (historyIndex <= 0) return;
+  historyIndex--;
+  applySnapshot(history[historyIndex]);
+}
+function redo() {
+  if (historyIndex >= history.length - 1) return;
+  historyIndex++;
+  applySnapshot(history[historyIndex]);
+}
+function applySnapshot(snap) {
+  const data = JSON.parse(snap);
+  state.blocks = data.blocks;
+  state.theme = data.theme;
+  state.storeName = data.storeName;
+  document.getElementById('tb-store-name').value = state.storeName;
+  document.getElementById('global-css').value = state.theme.customCss || '';
+  renderAll();
+  scheduleSave();
+  updateUndoRedoButtons();
+}
+function updateUndoRedoButtons() {
+  document.getElementById('undo-btn').disabled = historyIndex <= 0;
+  document.getElementById('redo-btn').disabled = historyIndex >= history.length - 1;
+}
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+    e.preventDefault();
+    if (e.shiftKey) redo(); else undo();
+  }
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+    e.preventDefault();
+    saveStore(false);
+  }
+});
+
+/* ════════════════════════════════════════════════════════════
+   AUTOSAVE
+   ════════════════════════════════════════════════════════════ */
+function markDirty() {
+  dirty = true;
+  setSaveStatus('saving');
+  pushHistory();
+  scheduleSave();
+}
+function scheduleSave() {
+  if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => saveStore(false), 1200);
+}
+function setSaveStatus(s) {
+  const el = document.getElementById('save-status');
+  el.className = '';
+  if (s === 'saving') { el.textContent = 'Saving…'; el.classList.add('saving'); }
+  else if (s === 'saved') { el.textContent = 'All changes saved'; el.classList.add('saved'); }
+  else if (s === 'published') { el.textContent = 'Published ✓'; el.classList.add('saved'); }
+  else if (s === 'error') { el.textContent = 'Save failed — retrying…'; el.classList.add('error'); }
+}
+async function saveStore(publish) {
+  if (!state.user) return;
+  saving = true;
+  setSaveStatus('saving');
+  const payload = {
+    store_name: state.storeName || null,
+    store_theme: state.theme,
+    store_blocks: state.blocks,
+  };
+  if (publish) payload.store_status = 'active';
+  const { error } = await sb.from('profiles').update(payload).eq('id', state.user.id);
+  saving = false;
+  if (error) { setSaveStatus('error'); toast('Save failed: ' + error.message, 'error'); return; }
+  dirty = false;
+  setSaveStatus(publish ? 'published' : 'saved');
+  if (publish) toast('Store published! 🎉');
+}
+window.addEventListener('beforeunload', (e) => {
+  if (dirty) { e.preventDefault(); e.returnValue = ''; }
+});
+
+/* ════════════════════════════════════════════════════════════
+   TOAST
+   ════════════════════════════════════════════════════════════ */
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), 2400);
+}
+
+/* ════════════════════════════════════════════════════════════
+   MAIN RENDER
+   ════════════════════════════════════════════════════════════ */
+function renderAll() {
+  renderCanvas();
+  renderLayers();
+  renderProps();
+  applyThemeVars();
+}
+
+function applyThemeVars() {
+  const canvas = document.getElementById('store-canvas');
+  const t = state.theme || {};
+  canvas.style.background = t.bg || '#ffffff';
+  canvas.style.color = t.text || '#0f172a';
+  canvas.style.fontFamily = `'${t.font || 'Inter'}', var(--font)`;
+  canvas.style.fontSize = (t.fontScale || 14) + 'px';
+  // inject custom CSS scoped to the canvas
+  let styleTag = document.getElementById('canvas-custom-css');
+  if (!styleTag) {
+    styleTag = document.createElement('style');
+    styleTag.id = 'canvas-custom-css';
+    document.head.appendChild(styleTag);
+  }
+  styleTag.textContent = scopeCss(t.customCss || '', '#store-canvas');
+}
+
+function scopeCss(css, scope) {
+  if (!css.trim()) return '';
+  // naive scoping: prefix each rule's selector with the scope
+  return css.replace(/(^|\})\s*([^{}]+)\s*\{/g, (m, brace, sel) => {
+    const scoped = sel.split(',').map(s => `${scope} ${s.trim()}`).join(', ');
+    return `${brace} ${scoped} {`;
+  });
+}
+
+function renderCanvas() {
+  const canvas = document.getElementById('store-canvas');
+  canvas.className = device === 'desktop' ? 'device-desktop' : 'device-mobile';
+  canvas.innerHTML = state.blocks.map((b, i) => renderSectionWrapper(b, i)).join('');
+}
+
+function renderSectionWrapper(block, index) {
+  const meta = SECTIONS.find(s => s.type === block.type);
+  const style = block.style || {};
+  const cls = [
+    'cs-section',
+    selectedId === block.id ? 'selected' : '',
+    style.hideMobile && device === 'mobile' ? 'hidden-block' : '',
+    style.hideDesktop && device === 'desktop' ? 'hidden-block' : '',
+    style.animation ? `anim-${style.animation}` : '',
+    style.customClass || '',
+  ].filter(Boolean).join(' ');
+
+  const wrapStyles = [];
+  if (style.bg) wrapStyles.push(`background:${style.bg}`);
+  if (style.textColor) wrapStyles.push(`color:${style.textColor}`);
+  if (style.paddingY) wrapStyles.push(`padding-top:${style.paddingY}px;padding-bottom:${style.paddingY}px`);
+  if (style.paddingX) wrapStyles.push(`padding-left:${style.paddingX}px;padding-right:${style.paddingX}px`);
+  if (style.radius) wrapStyles.push(`border-radius:${style.radius}px;overflow:hidden`);
+  if (style.maxWidth) wrapStyles.push(`max-width:${style.maxWidth}px;margin-left:auto;margin-right:auto`);
+
+  return `<div class="${cls}" style="${wrapStyles.join(';')}" data-id="${block.id}" data-index="${index}"
+            draggable="true"
+            ondragstart="onDragStart(event,'${block.id}')"
+            ondragover="onDragOver(event,'${block.id}')"
+            ondrop="onDrop(event,'${block.id}')"
+            ondragend="onDragEnd(event)"
+            onclick="selectBlock('${block.id}', event)">
+      <div class="drag-handle">${svg('<circle cx="9" cy="6" r="1.4"/><circle cx="15" cy="6" r="1.4"/><circle cx="9" cy="12" r="1.4"/><circle cx="15" cy="12" r="1.4"/><circle cx="9" cy="18" r="1.4"/><circle cx="15" cy="18" r="1.4"/>')}</div>
+      <div class="sec-label">${meta ? meta.label : block.type}</div>
+      <div class="section-actions">
+        <button class="sec-act-btn" title="Duplicate" onclick="duplicateBlock(event,'${block.id}')">${svg('<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>')}</button>
+        <button class="sec-act-btn" title="Move up" onclick="moveBlock(event,'${block.id}',-1)">${svg('<line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>')}</button>
+        <button class="sec-act-btn" title="Move down" onclick="moveBlock(event,'${block.id}',1)">${svg('<line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/>')}</button>
+        <button class="sec-act-btn" title="Delete" onclick="deleteBlock(event,'${block.id}')">${svg('<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/>')}</button>
+      </div>
+      ${renderBlockContent(block)}
+    </div>`;
+}
+
+/* ════════════════════════════════════════════════════════════
+   BLOCK CONTENT RENDERERS — one per StoreBlockType
+   ════════════════════════════════════════════════════════════ */
+function esc(s) { return (s ?? '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function nl2br(s) { return esc(s).replace(/\n/g, '<br>'); }
+function parsePipe(items) { return (items || []).map(s => s.split('|')); }
+const PRIMARY = () => (state.theme.primary || '#6366f1');
+const ACCENT = () => (state.theme.accent || '#a855f7');
+
+function renderBlockContent(block) {
+  const p = block.props || {};
+  switch (block.type) {
+    case 'hero': return `
+      <div class="cs-hero" style="background:${p.image ? 'transparent' : `linear-gradient(135deg, ${PRIMARY()}, ${ACCENT()})`}">
+        ${p.image ? `<img class="cs-hero-bg" src="${esc(p.image)}"><div class="cs-hero-overlay" style="background:linear-gradient(135deg, ${PRIMARY()}99, ${ACCENT()}99)"></div>` : ''}
+        <div class="cs-hero-logo">${state.storeName ? esc(state.storeName[0]) : 'B'}</div>
+        <div class="cs-hero-name">${esc(p.title || state.storeName || 'My Store')}</div>
+        <div class="cs-hero-tagline">${esc(p.subtitle || '')}</div>
+        ${p.cta ? `<a class="cs-hero-cta" style="color:${PRIMARY()}" href="${esc(p.ctaUrl || '#')}">${esc(p.cta)}</a>` : ''}
+      </div>`;
+    case 'banner': return `<div class="cs-announce" style="background:${ACCENT()}33;color:${ACCENT()}">${esc(p.text)}</div>`;
+    case 'announcement': return `<div class="cs-announce" style="background:${PRIMARY()}1a;color:${PRIMARY()}">${esc(p.text)}</div>`;
+    case 'marquee': return `<div class="cs-marquee" style="background:${PRIMARY()};color:#fff"><span>${esc(p.text)}${esc(p.text)}</span></div>`;
+    case 'nav': {
+      const links = parsePipe(p.links);
+      return `<div class="cs-nav">
+        <div class="cs-nav-logo" style="background:${PRIMARY()};color:#fff">${state.storeName ? esc(state.storeName[0]) : 'B'}</div>
+        <div class="cs-nav-name">${esc(p.title || state.storeName || 'My Store')}</div>
+        <div class="cs-nav-links">${links.map(([label]) => `<span>${esc(label)}</span>`).join('')}</div>
+      </div>`;
+    }
+    case 'heading': return `<div class="cs-heading" style="text-align:${p.align || 'left'}">${esc(p.text)}</div>`;
+    case 'text': return `<div class="cs-about" style="text-align:${p.align || 'left'}"><div class="cs-about-text">${nl2br(p.text)}</div></div>`;
+    case 'quote': return `<div class="cs-quote" style="background:${PRIMARY()}0d;color:${PRIMARY()}">${esc(p.text)}</div>`;
+    case 'two_column': return `<div class="cs-two-col"><div class="col">${nl2br(p.left)}</div><div class="col">${nl2br(p.right)}</div></div>`;
+    case 'image_text': return `<div class="cs-image-text">
+        ${p.image ? `<img src="${esc(p.image)}">` : `<div class="cs-image-text" style="background:linear-gradient(135deg,#EEF0FF,#E8F0FF);aspect-ratio:16/10;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#9CA3AF;font-size:28px">🖼️</div>`}
+        <div class="cs-image-text-title">${esc(p.title)}</div>
+        <div class="cs-image-text-text">${nl2br(p.text)}</div>
+        ${p.cta ? `<a class="cs-image-text-cta" style="background:${PRIMARY()};color:#fff" href="${esc(p.ctaUrl || '#')}">${esc(p.cta)}</a>` : ''}
+      </div>`;
+    case 'accordion': {
+      const items = parsePipe(p.items);
+      return `<div class="cs-accordion">${items.map(([q, a]) => `<div class="cs-acc-item"><div class="cs-acc-q">${esc(q)}</div><div class="cs-acc-a">${esc(a)}</div></div>`).join('')}</div>`;
+    }
+    case 'products': {
+      const layout = p.layout || 'cols-2';
+      const items = pickProducts(p);
+      return `<div class="cs-products">
+        <div class="cs-products-title">${esc(p.title || 'Products')}</div>
+        <div class="cs-product-grid ${layout}">${items.map(prod => `
+          <div class="cs-prod-card">
+            <div class="cs-prod-img">${prod.cover_url ? `<img src="${esc(prod.cover_url)}" style="width:100%;height:100%;object-fit:cover">` : '🛍️'}</div>
+            <div class="cs-prod-body">
+              <div class="cs-prod-title">${esc(prod.title || 'Product')}</div>
+              <div class="cs-prod-price" style="color:${PRIMARY()}">${formatPrice(prod.price)}</div>
+            </div>
+            <button class="cs-prod-btn" style="background:${PRIMARY()};color:#fff">View</button>
+          </div>`).join('') || emptyProductsHint()}
+        </div>
+      </div>`;
+    }
+    case 'product_single': {
+      const prod = allProducts.find(x => x.id === p.productId);
+      if (!prod) return `<div class="cs-single-prod"><div class="cs-embed-placeholder">Pick a product in the panel →</div></div>`;
+      return `<div class="cs-single-prod"><div class="cs-single-prod-card">
+        <div class="cs-prod-img" style="aspect-ratio:16/9">${prod.cover_url ? `<img src="${esc(prod.cover_url)}" style="width:100%;height:100%;object-fit:cover">` : '🛍️'}</div>
+        <div style="padding:14px"><div class="cs-prod-title" style="font-size:15px;white-space:normal">${esc(prod.title)}</div>
+        <div class="cs-prod-price" style="color:${PRIMARY()};margin:6px 0">${formatPrice(prod.price)}</div>
+        <button class="cs-prod-btn" style="background:${PRIMARY()};color:#fff;border-radius:50px;padding:10px">Buy now</button></div>
+      </div></div>`;
+    }
+    case 'pricing': {
+      const items = parsePipe(p.items);
+      return `<div class="cs-pricing"><div class="cs-pricing-title">${esc(p.title || 'Pricing')}</div>
+        <div class="cs-pricing-grid">${items.map(([name, price, desc, featured]) => `
+          <div class="cs-price-card ${featured ? 'featured' : ''}">
+            ${featured ? `<div class="cs-price-badge">Popular</div>` : ''}
+            <div class="cs-price-name">${esc(name)}</div>
+            <div class="cs-price-amt" style="color:${PRIMARY()}">${esc(price)}</div>
+            <div class="cs-price-desc">${esc(desc)}</div>
+          </div>`).join('')}</div></div>`;
+    }
+    case 'cta_banner': return `<div class="cs-cta" style="background:${PRIMARY()}0d">
+        <div class="cs-cta-title">${esc(p.title)}</div>
+        <div class="cs-cta-sub">${esc(p.subtitle)}</div>
+        <a class="cs-cta-btn" style="background:${PRIMARY()};color:#fff" href="${esc(p.ctaUrl || '#')}">${esc(p.cta)}</a>
+      </div>`;
+    case 'countdown': return `<div class="cs-countdown">
+        <div class="cs-countdown-title">${esc(p.title)}</div>
+        <div class="cs-countdown-grid">
+          ${['Days','Hours','Min','Sec'].map(l => `<div class="cs-countdown-cell"><div class="cs-countdown-num">00</div><div class="cs-countdown-lbl">${l}</div></div>`).join('')}
+        </div></div>`;
+    case 'testimonial': return `<div class="cs-testimonials"><div class="cs-testim-card">
+        <div class="cs-testim-stars">★★★★★</div>
+        <div class="cs-testim-text">${esc(p.quote)}</div>
+        <div class="cs-testim-author">— ${esc(p.author)}</div>
+      </div></div>`;
+    case 'stats': {
+      const items = parsePipe(p.items);
+      return `<div class="cs-stats">${items.map(([val, lbl]) => `<div class="cs-stat"><div class="cs-stat-val" style="color:${PRIMARY()}">${esc(val)}</div><div class="cs-stat-lbl">${esc(lbl)}</div></div>`).join('')}</div>`;
+    }
+    case 'logos': {
+      const items = parsePipe(p.items).map(x => x[0]);
+      return `<div class="cs-logos">${items.map(x => `<span>${esc(x)}</span>`).join('')}</div>`;
+    }
+    case 'team': {
+      const items = parsePipe(p.items);
+      return `<div class="cs-team"><div class="cs-team-title">${esc(p.title || 'Team')}</div>
+        <div class="cs-team-grid">${items.map(([name, role]) => `
+          <div class="cs-team-card"><div class="cs-team-avatar">${esc((name||'?')[0])}</div>
+          <div class="cs-team-name">${esc(name)}</div><div class="cs-team-role">${esc(role)}</div></div>`).join('')}</div></div>`;
+    }
+    case 'badge_row': {
+      const items = parsePipe(p.items).map(x => x[0]);
+      return `<div class="cs-badge-row">${items.map(x => `<span class="cs-badge-chip" style="background:${PRIMARY()}1a;color:${PRIMARY()}">${esc(x)}</span>`).join('')}</div>`;
+    }
+    case 'features': case 'cards': {
+      const items = parsePipe(p.items);
+      return `<div class="cs-features"><div class="cs-features-title">${esc(p.title || '')}</div>
+        <div class="cs-feat-grid">${items.map(([name, desc, icon]) => `
+          <div class="cs-feat-card"><div class="cs-feat-icon">${esc(icon || '⭐')}</div>
+          <div class="cs-feat-name">${esc(name)}</div><div class="cs-feat-desc">${esc(desc)}</div></div>`).join('')}</div></div>`;
+    }
+    case 'icon_grid': {
+      const items = parsePipe(p.items);
+      return `<div class="cs-features"><div class="cs-features-title">${esc(p.title || '')}</div>
+        <div class="cs-feat-grid">${items.map(([name, , icon]) => `
+          <div class="cs-feat-card" style="text-align:center"><div class="cs-feat-icon">${esc(icon || '⭐')}</div>
+          <div class="cs-feat-name">${esc(name)}</div></div>`).join('')}</div></div>`;
+    }
+    case 'steps': {
+      const items = parsePipe(p.items);
+      return `<div class="cs-steps"><div class="cs-steps-title">${esc(p.title || 'How it works')}</div>
+        ${items.map(([title, desc], i) => `
+          <div class="cs-step-item"><div class="cs-step-num" style="background:${PRIMARY()};color:#fff">${i+1}</div>
+          <div><div class="cs-step-text">${esc(title)}</div><div class="cs-feat-desc">${esc(desc)}</div></div></div>`).join('')}</div>`;
+    }
+    case 'faq': {
+      const items = parsePipe(p.items);
+      return `<div class="cs-faq"><div class="cs-faq-title">${esc(p.title || 'FAQ')}</div>
+        ${items.map(([q, a]) => `<div class="cs-faq-item"><div class="cs-faq-q">${esc(q)} <span>+</span></div><div class="cs-faq-a">${esc(a)}</div></div>`).join('')}</div>`;
+    }
+    case 'image': return `<div style="padding:16px 20px">
+        ${p.url ? `<img src="${esc(p.url)}" style="width:100%;border-radius:14px">` : `<div class="cs-gallery-img" style="aspect-ratio:16/9;width:100%">🖼️</div>`}
+        ${p.caption ? `<div class="prop-hint" style="text-align:center;margin-top:6px">${esc(p.caption)}</div>` : ''}
+      </div>`;
+    case 'gallery': {
+      const items = p.items || [];
+      return `<div class="cs-gallery"><div class="cs-gallery-grid cols-3">
+        ${items.length ? items.map(u => `<img class="cs-gallery-img" src="${esc(u)}" style="object-fit:cover">`).join('')
+                        : Array.from({length:6}).map(() => `<div class="cs-gallery-img">🖼️</div>`).join('')}
+      </div></div>`;
+    }
+    case 'video': return `<div class="cs-video"><div class="cs-video-wrap">
+        ${p.url ? embedVideo(p.url) : `<div class="cs-video-placeholder"><div class="cs-video-placeholder-icon">▶️</div><div class="cs-video-placeholder-text">Paste a YouTube/Vimeo/MP4 URL</div></div>`}
+      </div></div>`;
+    case 'newsletter': return `<div class="cs-newsletter" style="background:${PRIMARY()}0d">
+        <div class="cs-newsletter-title">${esc(p.title)}</div>
+        <div class="prop-hint">${esc(p.subtitle)}</div>
+        <div class="cs-newsletter-form"><input placeholder="you@email.com" disabled><button style="background:${PRIMARY()};color:#fff">Join</button></div>
+      </div>`;
+    case 'social': {
+      const items = parsePipe(p.items).map(x => x[0]);
+      return `<div class="cs-social">${items.map(x => `<div class="cs-social-icon" style="background:${PRIMARY()}1a">${esc(x)}</div>`).join('')}</div>`;
+    }
+    case 'contact': return `<div class="cs-contact">
+        <div class="cs-contact-title">${esc(p.title)}</div>
+        <div class="cs-contact-sub">${esc(p.subtitle)}</div>
+        <div class="cs-contact-grid">
+          <div class="cs-contact-row"><div class="cs-contact-icon" style="background:${PRIMARY()}1a">✉️</div> Send a message</div>
+        </div></div>`;
+    case 'map': return `<div class="cs-map"><div class="cs-map-box">📍 ${esc(p.location)}</div></div>`;
+    case 'button': return `<div class="cs-buttons"><a class="cs-custom-btn" style="background:${PRIMARY()};color:#fff" href="${esc(p.url || '#')}">${esc(p.label)}</a></div>`;
+    case 'embed': return `<div class="cs-embed"><div class="cs-embed-placeholder">⚙️ Embed code (${(p.code||'').length} chars)</div></div>`;
+    case 'html': return `<div class="cs-embed">${p.code ? p.code : `<div class="cs-embed-placeholder">✏️ Raw HTML — edit in panel</div>`}</div>`;
+    case 'divider': return `<div class="cs-divider"><div class="cs-divider-line"></div></div>`;
+    case 'spacer': return `<div class="cs-spacer" style="height:${p.height || 40}px"></div>`;
+    case 'footer': {
+      const links = parsePipe(p.links);
+      return `<div class="cs-footer">
+        <div class="cs-footer-brand">${esc(state.storeName || 'My Store')}</div>
+        <div class="cs-footer-links">${links.map(([label]) => `<span>${esc(label)}</span>`).join('')}</div>
+        <div class="cs-footer-copy">${esc(p.text || `© ${new Date().getFullYear()} ${state.storeName || ''}`)}</div>
+      </div>`;
+    }
+    default: return `<div class="cs-embed-placeholder">Unknown block: ${esc(block.type)}</div>`;
+  }
+}
+
+function formatPrice(cents) {
+  if (cents == null) return 'Free';
+  if (cents === 0) return 'Free';
+  return '$' + (cents / 100).toFixed(2);
+}
+function emptyProductsHint() {
+  return `<div class="cs-embed-placeholder" style="grid-column:1/-1">No products yet — click "Products" in the toolbar to add some</div>`;
+}
+function pickProducts(p) {
+  let items = allProducts;
+  if (p.ids && p.ids.length) items = allProducts.filter(x => p.ids.includes(x.id));
+  return items.slice(0, p.limit || 6);
+}
+function embedVideo(url) {
+  const yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
+  if (yt) return `<iframe src="https://www.youtube.com/embed/${yt[1]}" allowfullscreen></iframe>`;
+  const vm = url.match(/vimeo\.com\/(\d+)/);
+  if (vm) return `<iframe src="https://player.vimeo.com/video/${vm[1]}" allowfullscreen></iframe>`;
+  return `<video src="${esc(url)}" controls></video>`;
+}
+
+/* ════════════════════════════════════════════════════════════
+   SELECTION
+   ════════════════════════════════════════════════════════════ */
+function selectBlock(id, e) {
+  if (e) e.stopPropagation();
+  selectedId = id;
+  propTab = 'content';
+  renderAll();
+}
+function getBlock(id) { return state.blocks.find(b => b.id === id); }
+function getBlockIndex(id) { return state.blocks.findIndex(b => b.id === id); }
+
+/* ════════════════════════════════════════════════════════════
+   BLOCK CRUD
+   ════════════════════════════════════════════════════════════ */
+function addBlock(type, opts) {
+  const block = { id: uid(), type, props: { ...defaultProps(type), ...(opts || {}) }, style: defaultStyle() };
+  state.blocks.push(block);
+  selectedId = block.id;
+  propTab = 'content';
+  markDirty();
+  renderAll();
+  closeModal('add-section-modal');
+  setTimeout(() => {
+    const el = document.querySelector(`[data-id="${block.id}"]`);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 60);
+}
+function duplicateBlock(e, id) {
+  e.stopPropagation();
+  const i = getBlockIndex(id);
+  const copy = JSON.parse(JSON.stringify(state.blocks[i]));
+  copy.id = uid();
+  state.blocks.splice(i + 1, 0, copy);
+  selectedId = copy.id;
+  markDirty();
+  renderAll();
+}
+function deleteBlock(e, id) {
+  e.stopPropagation();
+  if (!confirm('Remove this section?')) return;
+  state.blocks = state.blocks.filter(b => b.id !== id);
+  if (selectedId === id) selectedId = null;
+  markDirty();
+  renderAll();
+}
+function moveBlock(e, id, dir) {
+  e.stopPropagation();
+  const i = getBlockIndex(id);
+  const j = i + dir;
+  if (j < 0 || j >= state.blocks.length) return;
+  [state.blocks[i], state.blocks[j]] = [state.blocks[j], state.blocks[i]];
+  markDirty();
+  renderAll();
+}
+function updateBlockProp(id, key, value) {
+  const b = getBlock(id);
+  if (!b) return;
+  b.props = b.props || {};
+  b.props[key] = value;
+  markDirty();
+  renderCanvasOnly();
+}
+function updateBlockStyle(id, key, value) {
+  const b = getBlock(id);
+  if (!b) return;
+  b.style = b.style || defaultStyle();
+  b.style[key] = value;
+  markDirty();
+  renderCanvasOnly();
+}
+// Lighter re-render that skips full prop-panel rebuild (used while typing)
+function renderCanvasOnly() {
+  renderCanvas();
+  renderLayers();
+}
+
+/* ════════════════════════════════════════════════════════════
+   DRAG & DROP REORDER (canvas + layers list)
+   ════════════════════════════════════════════════════════════ */
+let dragId = null;
+function onDragStart(e, id) {
+  dragId = id;
+  e.target.closest('.cs-section')?.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+}
+function onDragOver(e, id) {
+  e.preventDefault();
+  if (dragId === id) return;
+  const el = e.target.closest('.cs-section, .layer-item');
+  el?.classList.add('drag-over');
+}
+function onDrop(e, id) {
+  e.preventDefault();
+  document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+  if (!dragId || dragId === id) return;
+  reorderBlocks(dragId, id);
+}
+function onDragEnd() {
+  document.querySelectorAll('.dragging,.drag-over').forEach(el => el.classList.remove('dragging','drag-over'));
+  dragId = null;
+}
+function reorderBlocks(fromId, toId) {
+  const from = getBlockIndex(fromId);
+  const to = getBlockIndex(toId);
+  if (from < 0 || to < 0) return;
+  const [moved] = state.blocks.splice(from, 1);
+  state.blocks.splice(to, 0, moved);
+  markDirty();
+  renderAll();
+}
+
+/* ════════════════════════════════════════════════════════════
+   LAYERS PANEL
+   ════════════════════════════════════════════════════════════ */
+function renderLayers() {
+  const el = document.getElementById('layers-list');
+  if (!el) return;
+  el.innerHTML = state.blocks.map((b, i) => {
+    const meta = SECTIONS.find(s => s.type === b.type);
+    const hidden = b.style && (b.style.hideMobile || b.style.hideDesktop);
+    return `<div class="layer-item ${selectedId === b.id ? 'active' : ''} ${hidden ? 'hidden-block' : ''}"
+        draggable="true"
+        ondragstart="onDragStart(event,'${b.id}')"
+        ondragover="onDragOver(event,'${b.id}')"
+        ondrop="onDrop(event,'${b.id}')"
+        ondragend="onDragEnd(event)"
+        onclick="selectBlock('${b.id}')">
+      <span class="layer-drag-handle">${svg('<circle cx="9" cy="6" r="1.4"/><circle cx="15" cy="6" r="1.4"/><circle cx="9" cy="12" r="1.4"/><circle cx="15" cy="12" r="1.4"/><circle cx="9" cy="18" r="1.4"/><circle cx="15" cy="18" r="1.4"/>')}</span>
+      <span class="layer-icon">${meta ? meta.icon : '◻️'}</span>
+      <span class="layer-name">${i+1}. ${meta ? meta.label : b.type}</span>
+    </div>`;
+  }).join('') || `<div class="prop-hint" style="color:rgba(255,255,255,.4);padding:10px">No sections yet</div>`;
+}
+
+/* ════════════════════════════════════════════════════════════
+   SIDEBAR
+   ════════════════════════════════════════════════════════════ */
+function switchSbTab(tab) {
+  document.querySelectorAll('.sb-tabs .sb-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  ['sections','layers','themes','fonts','global'].forEach(t => {
+    document.getElementById('sb-tab-' + t).style.display = (t === tab) ? '' : 'none';
+  });
+  if (tab === 'layers') renderLayers();
+}
+
+function initSidebar() {
+  // Sections tab — grouped by category
+  const secEl = document.getElementById('sb-tab-sections');
+  secEl.innerHTML = SECTION_CATS.map(cat => `
+    <div class="sb-section">
+      <div class="sb-section-title">${esc(cat)}</div>
+      <div class="el-grid">
+        ${SECTIONS.filter(s => s.cat === cat).map(s => `
+          <div class="el-btn" onclick="addBlock('${s.type}')" title="Add ${esc(s.label)}">
+            ${s.icon}
+            <span>${esc(s.label)}</span>
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+
+  // Add-section modal grid (categorized)
+  const catsEl = document.getElementById('as-cats');
+  catsEl.innerHTML = ['All', ...SECTION_CATS].map((c, i) => `<div class="sb-tab ${i===0?'active':''}" data-ascat="${esc(c)}" onclick="filterAddSection('${esc(c)}')" style="color:var(--text-secondary)">${esc(c)}</div>`).join('');
+  renderAddSectionGrid('All');
+
+  // Themes tab
+  renderThemePresets();
+  renderCustomColors();
+  renderLayoutSettings();
+
+  // Fonts tab
+  renderFontList('font-list', 'font', false);
+  renderFontList('heading-font-list', 'headingFont', true);
+  document.getElementById('font-scale-slider').value = state.theme.fontScale || 14;
+
+  // Global tab
+  renderGlobalSettings();
+}
+
+function filterAddSection(cat) {
+  document.querySelectorAll('#as-cats .sb-tab').forEach(t => t.classList.toggle('active', t.dataset.ascat === cat));
+  renderAddSectionGrid(cat);
+}
+function renderAddSectionGrid(cat) {
+  const grid = document.getElementById('as-grid');
+  const list = cat === 'All' ? SECTIONS : SECTIONS.filter(s => s.cat === cat);
+  grid.innerHTML = list.map(s => `
+    <div class="el-btn" style="color:var(--text);background:var(--bg);border-color:var(--border)" onclick="addBlock('${s.type}')">
+      <span style="color:var(--blue)">${s.icon}</span>
+      <span>${esc(s.label)}</span>
+    </div>`).join('');
+}
+
+/* ── Themes tab ── */
+function renderThemePresets() {
+  const el = document.getElementById('theme-presets');
+  el.innerHTML = THEME_PRESETS.map(p => {
+    const active = state.theme.primary === p.theme.primary && state.theme.bg === p.theme.bg && state.theme.font === p.theme.font;
+    return `<div class="theme-card ${active ? 'active' : ''}" onclick='applyThemePreset(${JSON.stringify(p.theme)})'>
+      <div class="theme-card-swatch">
+        <span style="background:${p.theme.bg}"></span>
+        <span style="background:${p.theme.primary}"></span>
+        <span style="background:${p.theme.accent}"></span>
+      </div>
+      <div class="theme-card-name">${esc(p.name)}</div>
+    </div>`;
+  }).join('');
+}
+function applyThemePreset(theme) {
+  state.theme = { ...state.theme, ...theme, customCss: state.theme.customCss, fontScale: state.theme.fontScale };
+  markDirty();
+  renderThemePresets();
+  renderCustomColors();
+  renderFontList('font-list', 'font', false);
+  renderFontList('heading-font-list', 'headingFont', true);
+  applyThemeVars();
+  renderCanvas();
+}
+function renderCustomColors() {
+  const el = document.getElementById('custom-colors');
+  const t = state.theme;
+  el.innerHTML = `
+    ${colorRow('Primary', 'primary', t.primary || '#6366f1')}
+    ${colorRow('Accent', 'accent', t.accent || '#a855f7')}
+    ${colorRow('Background', 'bg', t.bg || '#ffffff')}
+    ${colorRow('Text', 'text', t.text || '#0f172a')}
+  `;
+}
+function colorRow(label, key, val) {
+  return `<div class="prop-group">
+    <div class="prop-label" style="color:rgba(255,255,255,.5)">${label}</div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <input type="color" class="prop-color-input" value="${val}" oninput="setThemeColor('${key}', this.value)">
+      <input class="prop-input" style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:#fff" value="${val}" oninput="setThemeColor('${key}', this.value)">
+    </div>
+  </div>`;
+}
+function setThemeColor(key, val) {
+  state.theme[key] = val;
+  markDirty();
+  applyThemeVars();
+  renderCanvas();
+  renderThemePresets();
+}
+function renderLayoutSettings() {
+  const el = document.getElementById('layout-settings');
+  const t = state.theme;
+  el.innerHTML = `
+    <div class="prop-group">
+      <div class="prop-label" style="color:rgba(255,255,255,.5)">Corner radius</div>
+      <input type="range" class="prop-slider" min="0" max="32" value="${t.radius ?? 16}" oninput="setThemeNum('radius', this.value)">
+    </div>
+    <div class="prop-group">
+      <div class="prop-label" style="color:rgba(255,255,255,.5)">Section spacing</div>
+      <input type="range" class="prop-slider" min="0" max="48" value="${t.spacing ?? 0}" oninput="setThemeNum('spacing', this.value)">
+    </div>`;
+}
+function setThemeNum(key, val) {
+  state.theme[key] = Number(val);
+  markDirty();
+}
+
+/* ── Fonts tab ── */
+function renderFontList(elId, key, isHeading) {
+  const el = document.getElementById(elId);
+  const current = state.theme[key] || (isHeading ? (state.theme.font || 'Inter') : 'Inter');
+  el.innerHTML = FONTS.map(f => `
+    <div class="font-item ${current === f ? 'active' : ''}" style="font-family:'${f}',sans-serif" onclick="setFont('${key}','${f}')">${f}</div>
+  `).join('');
+}
+function setFont(key, font) {
+  state.theme[key] = font;
+  markDirty();
+  renderFontList('font-list', 'font', false);
+  renderFontList('heading-font-list', 'headingFont', true);
+  applyThemeVars();
+}
+function setFontScale(val) {
+  state.theme.fontScale = Number(val);
+  markDirty();
+  applyThemeVars();
+}
+
+/* ── Global tab ── */
+function renderGlobalSettings() {
+  const el = document.getElementById('global-settings');
+  el.innerHTML = `
+    <div class="prop-group">
+      <div class="prop-label" style="color:rgba(255,255,255,.5)">Store description (SEO)</div>
+      <textarea class="prop-input prop-textarea" style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:#fff" placeholder="Short description shown to search engines"
+        oninput="setThemeStr('seoDescription', this.value)">${esc(state.theme.seoDescription || '')}</textarea>
+    </div>
+    <div class="prop-group">
+      <div class="prop-toggle-row">
+        <span style="color:rgba(255,255,255,.7);font-size:13px;font-weight:600">Sticky navigation</span>
+        <label class="prop-toggle"><input type="checkbox" ${state.theme.stickyNav ? 'checked' : ''} onchange="setThemeBool('stickyNav', this.checked)"><span class="prop-toggle-slider"></span></label>
+      </div>
+    </div>
+    <div class="prop-group">
+      <div class="prop-toggle-row">
+        <span style="color:rgba(255,255,255,.7);font-size:13px;font-weight:600">Dark mode storefront</span>
+        <label class="prop-toggle"><input type="checkbox" ${state.theme.darkMode ? 'checked' : ''} onchange="setThemeBool('darkMode', this.checked)"><span class="prop-toggle-slider"></span></label>
+      </div>
+    </div>`;
+}
+function setThemeStr(key, val) { state.theme[key] = val; markDirty(); }
+function setThemeBool(key, val) { state.theme[key] = val; markDirty(); }
+function setGlobalCss(val) {
+  state.theme.customCss = val;
+  markDirty();
+  applyThemeVars();
+}
+function onStoreNameChange(val) {
+  state.storeName = val;
+  markDirty();
+  renderCanvas();
+}
+
+/* ════════════════════════════════════════════════════════════
+   PROPERTIES PANEL
+   ════════════════════════════════════════════════════════════ */
+function switchPropTab(tab) {
+  propTab = tab;
+  document.querySelectorAll('#prop-panel-tabs .ph-tab').forEach(t => t.classList.toggle('active', t.dataset.ptab === tab));
+  renderProps();
+}
+
+function renderProps() {
+  const titleEl = document.getElementById('prop-panel-title');
+  const tabsEl = document.getElementById('prop-panel-tabs');
+  const body = document.getElementById('prop-panel-body');
+
+  if (!selectedId) {
+    titleEl.textContent = 'Properties';
+    tabsEl.style.display = 'none';
+    body.innerHTML = `<div style="color:var(--text-muted);font-size:13px;text-align:center;padding:40px 0">
+      Click a section on the canvas to edit its properties</div>`;
+    return;
+  }
+  const block = getBlock(selectedId);
+  if (!block) { selectedId = null; return renderProps(); }
+  const meta = SECTIONS.find(s => s.type === block.type);
+
+  titleEl.textContent = meta ? meta.label : block.type;
+  tabsEl.style.display = 'flex';
+  document.querySelectorAll('#prop-panel-tabs .ph-tab').forEach(t => t.classList.toggle('active', t.dataset.ptab === propTab));
+
+  if (propTab === 'content') body.innerHTML = renderContentProps(block);
+  else if (propTab === 'design') body.innerHTML = renderDesignProps(block);
+  else body.innerHTML = renderAdvancedProps(block);
+}
+
+function field(label, inner, hint) {
+  return `<div class="prop-group"><div class="prop-label">${esc(label)}</div>${inner}${hint ? `<div class="prop-hint">${esc(hint)}</div>` : ''}</div>`;
+}
+function textInput(block, key, val, placeholder) {
+  return `<input class="prop-input" value="${esc(val ?? '')}" placeholder="${esc(placeholder||'')}"
+    oninput="updateBlockProp('${block.id}','${key}', this.value)">`;
+}
+function textArea(block, key, val, placeholder) {
+  return `<textarea class="prop-input prop-textarea" placeholder="${esc(placeholder||'')}"
+    oninput="updateBlockProp('${block.id}','${key}', this.value)">${esc(val ?? '')}</textarea>`;
+}
+function numInput(block, key, val, min, max) {
+  return `<input class="prop-input" type="number" value="${val ?? ''}" ${min!=null?`min="${min}"`:''} ${max!=null?`max="${max}"`:''}
+    oninput="updateBlockProp('${block.id}','${key}', Number(this.value))">`;
+}
+function selectInput(block, key, val, options) {
+  return `<select class="prop-select" onchange="updateBlockProp('${block.id}','${key}', this.value)">
+    ${options.map(([v,l]) => `<option value="${esc(v)}" ${val===v?'selected':''}>${esc(l)}</option>`).join('')}
+  </select>`;
+}
+function alignInput(block, key, val) {
+  return selectInput(block, key, val || 'left', [['left','Left'],['center','Center'],['right','Right']]);
+}
+function imageUpload(block, key, val) {
+  return `<div class="upload-zone" onclick="triggerUpload('${block.id}','${key}')">
+    ${val ? `<img src="${esc(val)}">` : svg('<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>')}
+    <span>${val ? 'Replace image' : 'Click to upload image'}</span>
+  </div>`;
+}
+
+/* List-item editors: store as "field1|field2|field3" strings */
+function listEditor(block, key, items, fields, addLabel) {
+  const list = items || [];
+  return `<div class="prop-group">
+    ${list.map((raw, i) => {
+      const parts = raw.split('|');
+      return `<div class="prop-collapse" id="li-${block.id}-${i}">
+        <div class="prop-collapse-head" onclick="this.parentElement.classList.toggle('open')">
+          <span>${esc(parts[0] || `Item ${i+1}`)}</span>
+          <span style="display:flex;gap:6px;align-items:center">
+            <span onclick="event.stopPropagation();removeListItem('${block.id}','${key}',${i})" style="cursor:pointer;color:var(--red)">✕</span>
+            <span class="chev">›</span>
+          </span>
+        </div>
+        <div class="prop-collapse-body">
+          ${fields.map((f, fi) => `<div class="prop-group">
+            <div class="prop-label">${esc(f)}</div>
+            <input class="prop-input" value="${esc(parts[fi] || '')}" oninput="updateListItemField('${block.id}','${key}',${i},${fi},this.value)">
+          </div>`).join('')}
+        </div>
+      </div>`;
+    }).join('')}
+    <button class="prop-btn" onclick="addListItem('${block.id}','${key}',${fields.length})">+ ${esc(addLabel || 'Add item')}</button>
+  </div>`;
+}
+function updateListItemField(blockId, key, idx, fieldIdx, value) {
+  const b = getBlock(blockId);
+  const list = (b.props[key] || []).slice();
+  const parts = (list[idx] || '').split('|');
+  while (parts.length <= fieldIdx) parts.push('');
+  parts[fieldIdx] = value;
+  list[idx] = parts.join('|');
+  b.props[key] = list;
+  markDirty();
+  renderCanvasOnly();
+}
+function addListItem(blockId, key, fieldCount) {
+  const b = getBlock(blockId);
+  const list = (b.props[key] || []).slice();
+  list.push(Array(fieldCount).fill('New item').join('|'));
+  b.props[key] = list;
+  markDirty();
+  renderProps();
+  renderCanvasOnly();
+}
+function removeListItem(blockId, key, idx) {
+  const b = getBlock(blockId);
+  const list = (b.props[key] || []).slice();
+  list.splice(idx, 1);
+  b.props[key] = list;
+  markDirty();
+  renderProps();
+  renderCanvasOnly();
+}
+
+/* ── CONTENT tab per block type ── */
+function renderContentProps(block) {
+  const p = block.props || {};
+  const id = block.id;
+  switch (block.type) {
+    case 'hero': return [
+      field('Title', textInput(block,'title',p.title,'Welcome to my store')),
+      field('Subtitle', textArea(block,'subtitle',p.subtitle)),
+      field('Background image', imageUpload(block,'image',p.image)),
+      field('Button text', textInput(block,'cta',p.cta)),
+      field('Button link', textInput(block,'ctaUrl',p.ctaUrl)),
+    ].join('');
+    case 'banner': case 'announcement': case 'marquee': return field('Text', textInput(block,'text',p.text));
+    case 'nav': return [
+      field('Title (blank = store name)', textInput(block,'title',p.title)),
+      listEditor(block,'links',p.links,['Label','URL'],'Add link'),
+    ].join('');
+    case 'heading': return [
+      field('Text', textInput(block,'text',p.text)),
+      field('Alignment', alignInput(block,'align',p.align)),
+    ].join('');
+    case 'text': return [
+      field('Content', textArea(block,'text',p.text)),
+      field('Alignment', alignInput(block,'align',p.align)),
+    ].join('');
+    case 'quote': return field('Quote', textArea(block,'text',p.text));
+    case 'two_column': return [field('Left column', textArea(block,'left',p.left)), field('Right column', textArea(block,'right',p.right))].join('');
+    case 'image_text': return [
+      field('Image', imageUpload(block,'image',p.image)),
+      field('Title', textInput(block,'title',p.title)),
+      field('Text', textArea(block,'text',p.text)),
+      field('Button text', textInput(block,'cta',p.cta)),
+      field('Button link', textInput(block,'ctaUrl',p.ctaUrl)),
+    ].join('');
+    case 'accordion': return listEditor(block,'items',p.items,['Question','Answer'],'Add item');
+    case 'products': return [
+      field('Title', textInput(block,'title',p.title)),
+      field('Layout', selectInput(block,'layout',p.layout,[['cols-2','2 columns'],['cols-1','1 column'],['cols-3','3 columns']])),
+      field('Max products', numInput(block,'limit',p.limit,1,24)),
+      field('Choose products', `<button class="prop-btn" onclick="openProductPicker('${id}')">Select products (${(p.ids||[]).length || 'all'})</button>`),
+    ].join('');
+    case 'product_single': return field('Product', `<button class="prop-btn" onclick="openProductPicker('${id}',true)">${p.productId ? 'Change product' : 'Choose a product'}</button>`);
+    case 'features': case 'cards': return [
+      field('Title', textInput(block,'title',p.title)),
+      listEditor(block,'items',p.items,['Name','Description','Icon (emoji)'],'Add feature'),
+    ].join('');
+    case 'icon_grid': return [
+      field('Title', textInput(block,'title',p.title)),
+      listEditor(block,'items',p.items,['Label','—','Icon (emoji)'],'Add icon'),
+    ].join('');
+    case 'steps': return [field('Title', textInput(block,'title',p.title)), listEditor(block,'items',p.items,['Step title','Description'],'Add step')].join('');
+    case 'stats': return listEditor(block,'items',p.items,['Value','Label'],'Add stat');
+    case 'pricing': return [field('Title', textInput(block,'title',p.title)), listEditor(block,'items',p.items,['Plan name','Price','Description','Featured? (yes/no)'],'Add plan')].join('');
+    case 'faq': return [field('Title', textInput(block,'title',p.title)), listEditor(block,'items',p.items,['Question','Answer'],'Add question')].join('');
+    case 'testimonial': return [field('Quote', textArea(block,'quote',p.quote)), field('Author', textInput(block,'author',p.author))].join('');
+    case 'team': return [field('Title', textInput(block,'title',p.title)), listEditor(block,'items',p.items,['Name','Role'],'Add member')].join('');
+    case 'logos': return listEditor(block,'items',p.items,['Emoji / text'],'Add logo');
+    case 'badge_row': return listEditor(block,'items',p.items,['Badge text'],'Add badge');
+    case 'cta_banner': return [
+      field('Title', textInput(block,'title',p.title)),
+      field('Subtitle', textInput(block,'subtitle',p.subtitle)),
+      field('Button text', textInput(block,'cta',p.cta)),
+      field('Button link', textInput(block,'ctaUrl',p.ctaUrl)),
+    ].join('');
+    case 'countdown': return [
+      field('Title', textInput(block,'title',p.title)),
+      field('Ends at', `<input class="prop-input" type="datetime-local" value="${esc(p.endsAt||'')}" oninput="updateBlockProp('${id}','endsAt',this.value)">`),
+    ].join('');
+    case 'newsletter': return [field('Title', textInput(block,'title',p.title)), field('Subtitle', textInput(block,'subtitle',p.subtitle))].join('');
+    case 'social': return listEditor(block,'items',p.items,['Emoji','Link URL'],'Add social link');
+    case 'contact': return [field('Title', textInput(block,'title',p.title)), field('Subtitle', textInput(block,'subtitle',p.subtitle))].join('');
+    case 'map': return field('Location', textInput(block,'location',p.location));
+    case 'image': return [field('Image', imageUpload(block,'url',p.url)), field('Caption', textInput(block,'caption',p.caption))].join('');
+    case 'gallery': return field('Images', renderGalleryEditor(block, p));
+    case 'video': return field('Video URL', textInput(block,'url',p.url,'https://youtube.com/watch?v=...'), 'YouTube, Vimeo or direct MP4 link');
+    case 'button': return [field('Label', textInput(block,'label',p.label)), field('Link', textInput(block,'url',p.url))].join('');
+    case 'embed': return field('Embed code', `<textarea class="prop-input prop-textarea prop-code" oninput="updateBlockProp('${id}','code',this.value)" placeholder="<iframe ...></iframe>">${esc(p.code||'')}</textarea>`, 'Pasted code is sanitized on the live store.');
+    case 'html': return field('Custom HTML', `<textarea class="prop-input prop-textarea prop-code" oninput="updateBlockProp('${id}','code',this.value)" placeholder="<div>Your HTML</div>">${esc(p.code||'')}</textarea>`, 'Advanced — full HTML, rendered as-is on your storefront.');
+    case 'spacer': return field('Height (px)', `<div class="prop-slider-row"><input type="range" class="prop-slider" min="8" max="160" value="${p.height||40}" oninput="updateBlockProp('${id}','height', Number(this.value)); this.nextElementSibling.textContent=this.value+'px'"><span class="prop-slider-val">${p.height||40}px</span></div>`);
+    case 'footer': return [field('Copyright text', textInput(block,'text',p.text,'© 2026 My Store')), listEditor(block,'links',p.links,['Label','URL'],'Add link')].join('');
+    case 'divider': return `<div class="prop-hint">A simple horizontal divider — adjust spacing in the Design tab.</div>`;
+    default: return `<div class="prop-hint">No editable fields for this section.</div>`;
+  }
+}
+function renderGalleryEditor(block, p) {
+  const items = p.items || [];
+  return `<div>
+    <div class="picker-grid" style="grid-template-columns:repeat(3,1fr)">
+      ${items.map((url, i) => `<div style="position:relative">
+        <img src="${esc(url)}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px">
+        <button onclick="removeGalleryImg('${block.id}',${i})" style="position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;border:none;background:rgba(0,0,0,.6);color:#fff;font-size:10px;cursor:pointer">✕</button>
+      </div>`).join('')}
+    </div>
+    <button class="prop-btn" style="margin-top:8px" onclick="triggerUpload('${block.id}','__gallery')">+ Add image</button>
+  </div>`;
+}
+function removeGalleryImg(blockId, i) {
+  const b = getBlock(blockId);
+  b.props.items = (b.props.items || []).filter((_, idx) => idx !== i);
+  markDirty();
+  renderProps();
+  renderCanvasOnly();
+}
+
+/* ── DESIGN tab (style props shared by all blocks) ── */
+function renderDesignProps(block) {
+  const s = block.style || (block.style = defaultStyle());
+  const id = block.id;
+  return `
+    ${field('Background color', `<div class="prop-color-row">
+      ${['', '#ffffff', '#f8fafc', '#0f172a', PRIMARY()+'1a', ACCENT()+'1a'].map(c => `<div class="prop-swatch ${s.bg===c?'active':''}" style="background:${c||'repeating-conic-gradient(#ddd 0% 25%, #fff 0% 50%) 50% / 10px 10px'};border:1px solid var(--border)" onclick="updateBlockStyle('${id}','bg','${c}');renderProps()"></div>`).join('')}
+      <input type="color" class="prop-color-input" value="${s.bg && s.bg.startsWith('#') ? s.bg : '#ffffff'}" oninput="updateBlockStyle('${id}','bg', this.value)">
+    </div>`)}
+    ${field('Text color', `<div class="prop-color-row">
+      ${['', '#0f172a', '#ffffff', PRIMARY(), ACCENT()].map(c => `<div class="prop-swatch ${s.textColor===c?'active':''}" style="background:${c||'repeating-conic-gradient(#ddd 0% 25%, #fff 0% 50%) 50% / 10px 10px'};border:1px solid var(--border)" onclick="updateBlockStyle('${id}','textColor','${c}');renderProps()"></div>`).join('')}
+      <input type="color" class="prop-color-input" value="${s.textColor && s.textColor.startsWith('#') ? s.textColor : '#0f172a'}" oninput="updateBlockStyle('${id}','textColor', this.value)">
+    </div>`)}
+    ${field('Vertical padding', sliderRow(id,'paddingY',s.paddingY,0,100,'px'))}
+    ${field('Horizontal padding', sliderRow(id,'paddingX',s.paddingX,0,80,'px'))}
+    ${field('Corner radius', sliderRow(id,'radius',s.radius,0,40,'px'))}
+    ${field('Max width', sliderRow(id,'maxWidth',s.maxWidth,200,900,'px'), 'Leave at 0 for full width')}
+    ${field('Entrance animation', `<select class="prop-select" onchange="updateBlockStyle('${id}','animation', this.value); renderCanvas()">
+      ${ANIMATIONS.map(a => `<option value="${esc(a.value)}" ${s.animation===a.value?'selected':''}>${esc(a.label)}</option>`).join('')}
+    </select>`)}
+  `;
+}
+function sliderRow(id, key, val, min, max, unit) {
+  const v = val || 0;
+  return `<div class="prop-slider-row">
+    <input type="range" class="prop-slider" min="${min}" max="${max}" value="${v}"
+      oninput="updateBlockStyle('${id}','${key}', Number(this.value)); this.nextElementSibling.textContent=this.value+'${unit}'">
+    <span class="prop-slider-val">${v}${unit}</span>
+  </div>`;
+}
+
+/* ── ADVANCED tab ── */
+function renderAdvancedProps(block) {
+  const s = block.style || (block.style = defaultStyle());
+  const id = block.id;
+  return `
+    <div class="prop-group">
+      <div class="prop-toggle-row">
+        <span style="font-size:13px;font-weight:600;color:var(--text)">Hide on mobile</span>
+        <label class="prop-toggle"><input type="checkbox" ${s.hideMobile?'checked':''} onchange="updateBlockStyle('${id}','hideMobile', this.checked); renderAll()"><span class="prop-toggle-slider"></span></label>
+      </div>
+    </div>
+    <div class="prop-group">
+      <div class="prop-toggle-row">
+        <span style="font-size:13px;font-weight:600;color:var(--text)">Hide on desktop</span>
+        <label class="prop-toggle"><input type="checkbox" ${s.hideDesktop?'checked':''} onchange="updateBlockStyle('${id}','hideDesktop', this.checked); renderAll()"><span class="prop-toggle-slider"></span></label>
+      </div>
+    </div>
+    <div class="prop-sep"></div>
+    ${field('Custom CSS class', `<input class="prop-input" value="${esc(s.customClass||'')}" placeholder="my-custom-class" oninput="updateBlockStyle('${id}','customClass', this.value)">`, 'Attach a class name to target with custom CSS')}
+    ${field('Section ID', `<input class="prop-input" value="${esc(block.id)}" readonly style="opacity:.6">`, 'Use as an anchor link target, e.g. #'+block.id)}
+    <div class="prop-sep"></div>
+    <button class="prop-btn" onclick="duplicateBlock(event,'${id}')" style="margin-bottom:8px">${svg('<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>')} Duplicate section</button>
+    <button class="prop-btn danger" onclick="deleteBlock(event,'${id}')">${svg('<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>')} Delete section</button>
+  `;
+}
+
+/* ════════════════════════════════════════════════════════════
+   IMAGE UPLOAD (to Brixnode's "uploads" storage bucket)
+   ════════════════════════════════════════════════════════════ */
+let uploadCtx = null; // { blockId, key }
+function triggerUpload(blockId, key) {
+  uploadCtx = { blockId, key };
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.onchange = () => handleUpload(input.files[0]);
+  input.click();
+}
+async function handleUpload(file) {
+  if (!file || !uploadCtx) return;
+  toast('Uploading image…');
+  const ext = file.name.split('.').pop();
+  const path = `store-designer/${state.user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+  const { error } = await sb.storage.from('uploads').upload(path, file, { upsert: false });
+  if (error) { toast('Upload failed: ' + error.message); return; }
+  const { data } = sb.storage.from('uploads').getPublicUrl(path);
+  const url = data.publicUrl;
+  const { blockId, key } = uploadCtx;
+  if (key === '__gallery') {
+    const b = getBlock(blockId);
+    b.props.items = [...(b.props.items || []), url];
+  } else {
+    updateBlockProp(blockId, key, url);
+  }
+  markDirty();
+  renderProps();
+  renderCanvasOnly();
+  toast('Image uploaded ✓');
+  uploadCtx = null;
+}
+
+/* ════════════════════════════════════════════════════════════
+   PRODUCT PICKER MODAL
+   ════════════════════════════════════════════════════════════ */
+let pickerTargetBlock = null;
+let pickerSingleMode = false;
+function openProductPicker(blockId, singleMode) {
+  pickerTargetBlock = blockId || null;
+  pickerSingleMode = !!singleMode;
+  pickerSelected = new Set();
+  if (blockId) {
+    const b = getBlock(blockId);
+    if (singleMode && b.props.productId) pickerSelected.add(b.props.productId);
+    else if (b.props.ids) b.props.ids.forEach(id => pickerSelected.add(id));
+  }
+  document.querySelector('#product-picker-modal .modal-title').textContent =
+    pickerSingleMode ? 'Choose a product' : (blockId ? 'Select products' : 'Add Products Section');
+  document.getElementById('pp-title').closest('.prop-group').style.display = blockId ? 'none' : '';
+  document.getElementById('pp-layout').closest('.prop-group').style.display = blockId ? 'none' : '';
+  renderPickerGrid();
+  openModal('product-picker-modal');
+}
+function renderPickerGrid() {
+  const grid = document.getElementById('picker-grid');
+  if (!allProducts.length) {
+    grid.innerHTML = `<div class="prop-hint" style="grid-column:1/-1;text-align:center;padding:20px 0">No products yet. Create products from the Sell page first.</div>`;
+    return;
+  }
+  grid.innerHTML = allProducts.map(p => `
+    <div class="picker-item ${pickerSelected.has(p.id) ? 'selected' : ''}" onclick="togglePickerItem('${p.id}')">
+      ${p.cover_url ? `<img class="picker-thumb" src="${esc(p.cover_url)}">` : `<div class="picker-thumb" style="display:flex;align-items:center;justify-content:center">🛍️</div>`}
+      <div>
+        <div class="picker-title">${esc(p.title)}</div>
+        <div class="picker-price">${formatPrice(p.price)}</div>
+      </div>
+    </div>`).join('');
+}
+function togglePickerItem(id) {
+  if (pickerSingleMode) {
+    pickerSelected = new Set([id]);
+  } else if (pickerSelected.has(id)) {
+    pickerSelected.delete(id);
+  } else {
+    pickerSelected.add(id);
+  }
+  renderPickerGrid();
+}
+function confirmProductPicker() {
+  if (pickerTargetBlock) {
+    const b = getBlock(pickerTargetBlock);
+    if (pickerSingleMode) {
+      b.props.productId = [...pickerSelected][0] || '';
+    } else {
+      b.props.ids = [...pickerSelected];
+    }
+    markDirty();
+    renderProps();
+    renderCanvasOnly();
+  } else {
+    const title = document.getElementById('pp-title').value || 'Featured Products';
+    const layout = document.getElementById('pp-layout').value;
+    addBlock('products', { title, layout, ids: [...pickerSelected], limit: pickerSelected.size || 6 });
+  }
+  closeModal('product-picker-modal');
+}
+
+/* ════════════════════════════════════════════════════════════
+   ZOOM / DEVICE
+   ════════════════════════════════════════════════════════════ */
+function setDevice(d) {
+  device = d;
+  document.querySelectorAll('.device-btn').forEach(b => b.classList.toggle('active', b.dataset.device === d));
+  renderCanvas();
+  fitCanvas();
+}
+function zoomBy(delta) {
+  zoomPct = Math.max(40, Math.min(150, zoomPct + delta));
+  applyZoom();
+}
+function applyZoom() {
+  document.getElementById('zoom-val').textContent = zoomPct + '%';
+  document.getElementById('store-canvas').style.transform = `scale(${zoomPct/100})`;
+}
+function fitCanvas() {
+  const wrap = document.getElementById('canvas-wrap');
+  const canvas = document.getElementById('store-canvas');
+  const targetWidth = device === 'desktop' ? 900 : 390;
+  const avail = wrap.clientWidth - 40;
+  zoomPct = Math.max(40, Math.min(100, Math.floor((avail / targetWidth) * 100)));
+  applyZoom();
+}
+window.addEventListener('resize', () => fitCanvas());
+
+/* ════════════════════════════════════════════════════════════
+   ADD SECTION MODAL helpers
+   ════════════════════════════════════════════════════════════ */
+function openAddSectionModal() { openModal('add-section-modal'); }
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+/* ════════════════════════════════════════════════════════════
+   PREVIEW
+   ════════════════════════════════════════════════════════════ */
+function previewStore() {
+  const canvas = document.getElementById('store-canvas');
+  const preview = document.getElementById('preview-canvas');
+  preview.innerHTML = canvas.outerHTML;
+  const cloned = preview.querySelector('#store-canvas');
+  if (cloned) {
+    cloned.removeAttribute('id');
+    cloned.style.transform = 'none';
+    cloned.style.width = '100%';
+    cloned.style.boxShadow = 'none';
+    cloned.style.minHeight = 'auto';
+    // strip editor-only controls
+    cloned.querySelectorAll('.section-actions,.sec-label,.drag-handle').forEach(el => el.remove());
+    cloned.querySelectorAll('.cs-section').forEach(el => { el.style.outline = 'none'; el.style.cursor = 'default'; });
+  }
+  openModal('preview-modal');
+}
+
+/* ════════════════════════════════════════════════════════════
+   EXPORT / IMPORT (JSON + standalone HTML)
+   ════════════════════════════════════════════════════════════ */
+function openCodeModal(mode) {
+  const title = document.getElementById('code-modal-title');
+  const body = document.getElementById('code-modal-body');
+  if (mode === 'json') {
+    title.textContent = 'Export / Import design JSON';
+    const json = JSON.stringify({ storeName: state.storeName, theme: state.theme, blocks: state.blocks }, null, 2);
+    body.innerHTML = `
+      <div class="prop-hint" style="margin-bottom:8px">Copy this JSON to back up your design, or paste a previously exported JSON below and click Import.</div>
+      <div class="code-view" id="json-export">${esc(json)}</div>
+      <div class="modal-actions">
+        <button class="prop-btn" onclick="copyText('json-export')">Copy</button>
+        <button class="prop-btn" onclick="downloadText('${esc((state.profile?.username)||'store')}-design.json', document.getElementById('json-export').textContent, 'application/json')">Download</button>
+      </div>
+      <div class="prop-sep"></div>
+      <div class="prop-label">Import JSON</div>
+      <textarea class="prop-input prop-textarea prop-code" id="json-import" placeholder="Paste exported JSON here…" style="min-height:120px"></textarea>
+      <div class="modal-actions">
+        <button class="prop-btn primary" onclick="importJson()">Import & replace design</button>
+      </div>
+    `;
+  } else {
+    title.textContent = 'Export standalone HTML';
+    const html = buildExportHtml();
+    body.innerHTML = `
+      <div class="prop-hint" style="margin-bottom:8px">A self-contained HTML snapshot of your storefront — useful for backups or hosting elsewhere. Your live Brixnode page (<code>brixnode.com/@${esc(state.profile?.username||'')}</code>) always reflects your saved design automatically.</div>
+      <div class="code-view" id="html-export" style="max-height:40vh">${esc(html.slice(0, 4000))}${html.length>4000?'\n…':''}</div>
+      <div class="modal-actions">
+        <button class="prop-btn primary" onclick='downloadText(${JSON.stringify((state.profile?.username||'store')+'.html')}, ${JSON.stringify(html)}, "text/html")'>Download HTML</button>
+      </div>
+    `;
+  }
+  openModal('code-modal');
+}
+function copyText(elId) {
+  const text = document.getElementById(elId).textContent;
+  navigator.clipboard?.writeText(text);
+  toast('Copied to clipboard');
+}
+function downloadText(filename, text, mime) {
+  const blob = new Blob([text], { type: mime || 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+}
+function importJson() {
+  const raw = document.getElementById('json-import').value.trim();
+  if (!raw) return;
+  try {
+    const data = JSON.parse(raw);
+    if (!Array.isArray(data.blocks)) throw new Error('Missing "blocks" array');
+    state.blocks = data.blocks;
+    state.theme = data.theme || state.theme;
+    state.storeName = data.storeName ?? state.storeName;
+    document.getElementById('tb-store-name').value = state.storeName;
+    document.getElementById('global-css').value = state.theme.customCss || '';
+    selectedId = null;
+    markDirty();
+    renderAll();
+    closeModal('code-modal');
+    toast('Design imported ✓');
+  } catch (e) {
+    toast('Invalid JSON: ' + e.message);
+  }
+}
+function buildExportHtml() {
+  const canvas = document.getElementById('store-canvas');
+  const clone = canvas.cloneNode(true);
+  clone.removeAttribute('id');
+  clone.style.transform = 'none';
+  clone.querySelectorAll('.section-actions,.sec-label,.drag-handle').forEach(el => el.remove());
+  clone.querySelectorAll('.cs-section').forEach(el => { el.style.outline = 'none'; el.removeAttribute('draggable'); });
+  const sectionCss = document.querySelector('style') ? Array.from(document.querySelectorAll('style')).map(s=>s.textContent).join('\n') : '';
+  return `<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${esc(state.storeName || 'My Store')}</title>
+<style>body{margin:0;font-family:'${state.theme.font||'Inter'}',sans-serif;background:${state.theme.bg||'#fff'};color:${state.theme.text||'#0f172a'}}
+${sectionCss}
+${scopeCss(state.theme.customCss||'', 'body')}
+#export-root{max-width:${device==='desktop'?'900px':'480px'};margin:0 auto;background:${state.theme.bg||'#fff'}}
+</style></head><body><div id="export-root">${clone.innerHTML}</div></body></html>`;
+}
+
+
+
+
+
+
+
+</script>
+</body>
+</html>
+

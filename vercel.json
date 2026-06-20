@@ -1,0 +1,6 @@
+{
+  "rewrites": [{ "source": "/((?!api/|sw.js|manifest.webmanifest|robots.txt|sitemap.xml|icon-.*|store-designer-pro.html).*)", "destination": "/" }],
+  "functions": {
+    "api/**/*.ts": { "runtime": "nodejs20.x" }
+  }
+}
